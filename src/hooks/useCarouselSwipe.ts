@@ -159,7 +159,7 @@ export const useCarouselJumpToIndex = (
   } = useCarouselContext();
 
   const { routes, noOfRoutes, animatedRouteIndex } = useInternalContext();
-  const { smoothJump } = usePropsContext();
+  const { jumpMode } = usePropsContext();
   const {
     smoothJumpStartRouteIndexSV,
     setSmoothJumpStartRouteIndex,
@@ -190,7 +190,8 @@ export const useCarouselJumpToIndex = (
       setIsJumping(true);
       jumpEndRouteIndexSV.value = routeIndexToJumpTo;
 
-      if (smoothJump) {
+      /** For smooth jump, translate to the adjacent route of the route to jump to */
+      if (jumpMode === 'smooth') {
         const shouldJumpLeft = routeIndexToJumpTo > currentRouteIndex;
         let tempRouteIndexToJumpTo: number;
         if (shouldJumpLeft) {
@@ -208,25 +209,35 @@ export const useCarouselJumpToIndex = (
       currentRouteIndexSV.value = routeIndexToJumpTo;
       updateCurrentRouteIndex(routeIndexToJumpTo);
 
-      animatedRouteIndex.value = withTiming(routeIndexToJumpTo, {
-        duration: AUTO_SWIPE_COMPLETION_DURATION,
-        easing: Easing.ease,
-      });
-
-      swipeTranslationXSV.value = withTiming(
-        -routeIndexToJumpTo * translationPerSceneContainer,
-        {
+      if (jumpMode !== 'no-animation') {
+        animatedRouteIndex.value = withTiming(routeIndexToJumpTo, {
           duration: AUTO_SWIPE_COMPLETION_DURATION,
           easing: Easing.ease,
-        },
-        () => {
-          jumpEndRouteIndexSV.value = null;
-          smoothJumpStartRouteIndexSV.value = routeIndexToJumpTo;
-          smoothJumpStartRouteTranslationXSV.value = 0;
-          runOnJS(setSmoothJumpStartRouteIndex)(routeIndexToJumpTo);
-          runOnJS(setIsJumping)(false);
-        }
-      );
+        });
+        swipeTranslationXSV.value = withTiming(
+          -routeIndexToJumpTo * translationPerSceneContainer,
+          {
+            duration: AUTO_SWIPE_COMPLETION_DURATION,
+            easing: Easing.ease,
+          },
+          () => {
+            jumpEndRouteIndexSV.value = null;
+            smoothJumpStartRouteIndexSV.value = routeIndexToJumpTo;
+            smoothJumpStartRouteTranslationXSV.value = 0;
+            runOnJS(setSmoothJumpStartRouteIndex)(routeIndexToJumpTo);
+            runOnJS(setIsJumping)(false);
+          }
+        );
+      } else {
+        animatedRouteIndex.value = routeIndexToJumpTo;
+        swipeTranslationXSV.value =
+          -routeIndexToJumpTo * translationPerSceneContainer;
+        jumpEndRouteIndexSV.value = null;
+        smoothJumpStartRouteIndexSV.value = routeIndexToJumpTo;
+        smoothJumpStartRouteTranslationXSV.value = 0;
+        runOnJS(setSmoothJumpStartRouteIndex)(routeIndexToJumpTo);
+        runOnJS(setIsJumping)(false);
+      }
     },
     [
       currentRouteIndexSV,
@@ -234,7 +245,7 @@ export const useCarouselJumpToIndex = (
       maxRouteIndex,
       setIsJumping,
       jumpEndRouteIndexSV,
-      smoothJump,
+      jumpMode,
       updateCurrentRouteIndex,
       animatedRouteIndex,
       swipeTranslationXSV,

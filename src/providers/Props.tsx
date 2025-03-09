@@ -4,6 +4,7 @@ import type {
   TabBarType,
   TabBarPosition,
   KeyboardDismissMode,
+  JumpMode,
 } from '../types/TabView';
 import type {
   NavigationState,
@@ -28,7 +29,7 @@ type PropsContext = {
   tabStyle: StyleProp<ViewStyle>;
   scrollableTabWidth: number;
   swipeEnabled: boolean;
-  smoothJump: boolean;
+  jumpMode: JumpMode;
   sceneContainerGap: number;
   sceneContainerStyle: StyleProp<ViewStyle>;
   keyboardDismissMode?: KeyboardDismissMode;
@@ -58,7 +59,7 @@ const PropsContext = createContext<PropsContext>({
   tabBarStyle: undefined,
   tabStyle: undefined,
   swipeEnabled: true,
-  smoothJump: true,
+  jumpMode: 'smooth',
   sceneContainerGap: 0,
   sceneContainerStyle: undefined,
   keyboardDismissMode: undefined,

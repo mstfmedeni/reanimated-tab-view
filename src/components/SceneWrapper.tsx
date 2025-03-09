@@ -10,7 +10,7 @@ type SceneWrapperProps = {
 
 const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(
   ({ routeIndex, children }) => {
-    const { smoothJump } = usePropsContext();
+    const { jumpMode } = usePropsContext();
     const {
       smoothJumpStartRouteIndexSV,
       jumpEndRouteIndexSV,
@@ -18,7 +18,7 @@ const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(
     } = useJumpContext();
 
     const sceneWrapperAnimatedStyle = useAnimatedStyle(() => {
-      if (!smoothJump) {
+      if (jumpMode !== 'smooth') {
         return { transform: [{ translateX: 0 }], opacity: 1 };
       }
       const isPrevRoute = routeIndex === smoothJumpStartRouteIndexSV.value;
@@ -45,7 +45,7 @@ const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(
         ],
         opacity: !isInBetweenPrevAndJumpRoute ? 1 : 0,
       };
-    }, [routeIndex, smoothJump, smoothJumpStartRouteTranslationXSV]);
+    }, [routeIndex, jumpMode, smoothJumpStartRouteTranslationXSV]);
     return (
       <Animated.View
         style={[styles.prevRouteSceneWrapper, sceneWrapperAnimatedStyle]}

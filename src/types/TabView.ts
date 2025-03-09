@@ -16,6 +16,8 @@ export type RenderMode = 'all' | 'windowed' | 'lazy';
 
 export type TabBarPosition = 'top' | 'bottom';
 
+export type JumpMode = 'smooth' | 'scrolling' | 'no-animation';
+
 export type KeyboardDismissMode = 'none' | 'on-drag' | 'auto';
 
 export type TabViewProps = Omit<ViewProps, 'children'> & {
@@ -39,7 +41,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
     renderTabBar?: (props: TabBarProps) => React.ReactNode;
   };
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
-  smoothJump?: boolean;
+  jumpMode?: JumpMode;
   initialLayout?: Partial<Layout>;
   sceneContainerStyle?: StyleProp<ViewStyle>;
   sceneContainerGap?: number;

@@ -34,10 +34,11 @@ Additionally, reanimated-tab-view also provides the following features
 
     <img src="./assets/dynamic_tab_width.gif" width="360">
 
-- Customisable jump-to animations (smooth jump or scroll jump). Can be modified using the `smoothJump` prop.
+- Customisable jump-to animations (smooth jump or scroll jump). Can be modified using the `jumpMode` prop.
 
-  - Scroll jump: When jumped from tab one to tab four, the jump animation scrolls through the scenes in between (scenes of tab two and tab three). In case the scenes in between are not rendered (while using lazy/windowed render modes), the jump-to animation will result in a momentary blank splash.
+  - Scrolling jump: When jumped from tab one to tab four, the jump animation scrolls through the scenes in between (scenes of tab two and tab three). In case the scenes in between haven't been already rendered (while using lazy/windowed render modes), the jump-to animation will result in a momentary blank splash.
   - Smooth jump: When jumped from tab one to tab four, the jump animation smoothly animates to the target scene of tab four without scrolling through the scenes in between. This helps prevent blank splashes when using lazy/windowed render modes. This is enabled by default.
+  - No animation: When jumped from tab one to tab four, the jump animation does not animate to the target scene of tab four. This is useful when you want to jump to a scene without any animation.
 
     |                   Smooth Jump                    |                   Scroll Jump                    |
     | :----------------------------------------------: | :----------------------------------------------: |
@@ -133,8 +134,9 @@ export default function TabViewExample() {
 | keyboardDismissMode | Specifies how to dismiss the keyboard.                                                         | No       | `'auto'\|'on-drag'\|'none'`                                       | 'auto'    |
 | animatedRouteIndex  | A callback equivalent. Pass a shared value and its value gets updated when tab view is swipeds | No       | `SharedValue<number>`                                             | undefined |
 | swipeEnabled        | Enables or disables swipe gestures.                                                            | No       | Boolean                                                           | true      |
+| sceneContainerGap   | The gap between each scene.                                                                    | No       | Number                                                            | 0         |
 | renderMode          | Specifies the layout mode of the tab view.                                                     | No       | `'windowed'\|'lazy'\|'all'`                                       | "all"     |
-| smoothJump          | Enables or disables smooth jumping between tabs.                                               | No       | Boolean                                                           | true      |
+| jumpMode            | Specifies the jump mode of the tab view.                                                       | No       | `'smooth'\|'scrolling'\|'no-animation'`                           | "smooth"  |
 | tabBarConfig        | Configuration for the tab bar.                                                                 | No       | `TabBarConfig`- For details, see below.                           | undefined |
 | renderScene         | A function that renders the scene for a given route.                                           | Yes      | `(props: SceneRendererProps & {route: Route}) => React.ReactNode` |           |
 | onIndexChange       | A function that is called when the index changes.                                              | Yes      | `(index:number) => void`                                          |           |
