@@ -24,19 +24,16 @@ export type CarouselImperativeHandle = {
 };
 
 const TabViewCarouselWithoutProviders = React.memo(
-  forwardRef<CarouselImperativeHandle, TabViewCarouselProps>((props, ref) => {
-    //#region props
+  forwardRef<CarouselImperativeHandle, TabViewCarouselProps>((_, ref) => {
+    //#region context
     const {
-      style,
+      keyboardDismissMode,
+      navigationState,
       sceneContainerStyle,
       renderScene,
       onSwipeStart,
       onSwipeEnd,
-    } = props;
-    //#endregion
-
-    //#region context
-    const { keyboardDismissMode, navigationState } = usePropsContext();
+    } = usePropsContext();
 
     const {
       tabViewLayout,
@@ -104,7 +101,7 @@ const TabViewCarouselWithoutProviders = React.memo(
     //#region render
     return (
       <GestureDetector gesture={swipePanGesture}>
-        <View style={[styles.container, style]}>
+        <View style={[styles.container]}>
           {navigationState.routes.map((route, index) => {
             const shouldRender = computeShouldRenderRoute(index);
             const renderOffset = index * translationPerSceneContainer;

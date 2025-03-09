@@ -14,20 +14,12 @@ import {
   useInternalContext,
 } from '../providers/Internal';
 import { PropsContextProvider, usePropsContext } from '../providers/Props';
-import { useStateUpdatesListener } from '../hooks/useStateUpdatesListener';
 import { SCROLLABLE_TAB_WIDTH } from '../constants/tabBar';
+import useHandleIndexChange from '../hooks/useHandlerIndexChange';
 
 export const TabViewWithoutProviders = React.memo(() => {
-  const {
-    tabBarPosition,
-    sceneContainerStyle,
-    tabBarStyle,
-    tabStyle,
-    renderTabBar,
-    renderScene,
-    onSwipeEnd,
-    onSwipeStart,
-  } = usePropsContext();
+  const { tabBarPosition, tabBarStyle, tabStyle, renderTabBar } =
+    usePropsContext();
 
   const { tabViewLayout, tabViewCarouselRef, setTabViewLayout } =
     useInternalContext();
@@ -37,6 +29,10 @@ export const TabViewWithoutProviders = React.memo(() => {
     const width: number | `${number}%` = tabViewLayout?.width || '100%';
     return { width };
   }, [tabViewLayout]);
+  //#endregion
+
+  //#region hooks
+  useHandleIndexChange();
   //#endregion
 
   //#region callbacks
@@ -79,13 +75,7 @@ export const TabViewWithoutProviders = React.memo(() => {
       onLayout={onTabViewLayout}
     >
       {tabBarPosition === 'top' && tabBar}
-      <TabViewCarousel
-        ref={tabViewCarouselRef}
-        renderScene={renderScene}
-        sceneContainerStyle={sceneContainerStyle}
-        onSwipeEnd={onSwipeEnd}
-        onSwipeStart={onSwipeStart}
-      />
+      <TabViewCarousel ref={tabViewCarouselRef} />
       {tabBarPosition === 'bottom' && tabBar}
     </View>
   );
@@ -97,6 +87,7 @@ export const TabView = React.memo<TabViewProps>((props) => {
   const {
     navigationState,
     initialLayout,
+    animatedRouteIndex: providedAnimatedRouteIndexSV,
     sceneContainerStyle,
     keyboardDismissMode = 'auto',
     swipeEnabled = true,
@@ -154,12 +145,6 @@ export const TabView = React.memo<TabViewProps>((props) => {
   }, [_tabBarDynamicWidthEnabled, tabBarType]);
   //#endregion
 
-  //#region hooks
-  useStateUpdatesListener(currentRouteIndex, () => {
-    onIndexChange?.(currentRouteIndex);
-  });
-  //#endregion
-
   //#region handlers
   const jumpTo = useCallback((routeKey: string) => {
     tabViewCarouselRef.current?.jumpToRoute(routeKey);
@@ -184,8 +169,10 @@ export const TabView = React.memo<TabViewProps>((props) => {
       sceneContainerGap,
       sceneContainerStyle,
       keyboardDismissMode,
+      providedAnimatedRouteIndexSV,
       renderTabBar,
       renderScene,
+      onIndexChange,
       onSwipeEnd,
       onSwipeStart,
     };
@@ -205,8 +192,10 @@ export const TabView = React.memo<TabViewProps>((props) => {
     sceneContainerGap,
     sceneContainerStyle,
     keyboardDismissMode,
+    providedAnimatedRouteIndexSV,
     renderTabBar,
     renderScene,
+    onIndexChange,
     onSwipeEnd,
     onSwipeStart,
   ]);

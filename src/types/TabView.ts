@@ -8,6 +8,7 @@ import type {
   SceneRendererProps,
 } from './common';
 import type { TabBarProps } from './TabBar';
+import type { SharedValue } from 'react-native-reanimated';
 
 export type TabBarType = 'primary' | 'secondary';
 
@@ -25,6 +26,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
       route: Route;
     }
   ) => React.ReactNode;
+  animatedRouteIndex?: SharedValue<number>;
   tabBarConfig?: {
     tabBarPosition?: TabBarPosition;
     tabBarScrollEnabled?: boolean;
