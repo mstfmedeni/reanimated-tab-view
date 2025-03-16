@@ -157,6 +157,8 @@ tabBarConfig properties are as follows:
 | tabBarIndicatorStyle      | Used to modify the style for the tab bar indicator.                        | No       | `StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>` | undefined                                             |
 | renderTabBar              | Custom method to render the tab bar.                                       | No       | Function                                                 | undefined                                             |
 
+## Author
+
 - [Adithya Viswamithiran](https://github.com/adithyavis/)
 
 ## License
