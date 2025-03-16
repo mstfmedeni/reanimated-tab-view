@@ -1,5 +1,3 @@
-import type { SharedValue } from 'react-native-reanimated';
-
 export type Route = {
   key: string;
   title?: string;
@@ -23,7 +21,5 @@ export type Layout = {
 };
 
 export type SceneRendererProps = {
-  layout: Layout;
-  animatedRouteIndex: SharedValue<number>;
-  jumpTo: (key: string) => void;
+  route: Route;
 };

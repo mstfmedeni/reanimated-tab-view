@@ -9,7 +9,8 @@ import { usePropsContext } from '../providers/Props';
 const TabIndicator = React.memo((props: TabIndicatorProps) => {
   const { style } = props;
 
-  const { tabBarType, tabBarPosition } = usePropsContext();
+  const { tabBarType, tabBarPosition, tabBarIndicatorStyle } =
+    usePropsContext();
   const { animatedRouteIndex } = useInternalContext();
 
   const {
@@ -68,6 +69,7 @@ const TabIndicator = React.memo((props: TabIndicatorProps) => {
           tabBarType === 'primary' && styles.primaryTabIndicator,
           tabBarPosition === 'top' && styles.topTabIndicator,
           tabBarPosition === 'bottom' && styles.bottomTabIndicator,
+          tabBarIndicatorStyle,
           style,
         ]}
       />
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 2,
     width: '100%',
+    backgroundColor: 'yellow',
   },
   topTabIndicator: {
     bottom: 0,

@@ -1,12 +1,7 @@
 import type { ViewProps } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
-import type {
-  Layout,
-  NavigationState,
-  Route,
-  SceneRendererProps,
-} from './common';
+import type { Layout, NavigationState, SceneRendererProps } from './common';
 import type { TabBarProps } from './TabBar';
 import type { SharedValue } from 'react-native-reanimated';
 
@@ -23,11 +18,7 @@ export type KeyboardDismissMode = 'none' | 'on-drag' | 'auto';
 export type TabViewProps = Omit<ViewProps, 'children'> & {
   onIndexChange: (index: number) => void;
   navigationState: NavigationState;
-  renderScene: (
-    props: SceneRendererProps & {
-      route: Route;
-    }
-  ) => React.ReactNode;
+  renderScene: (props: SceneRendererProps) => React.ReactNode;
   animatedRouteIndex?: SharedValue<number>;
   tabBarConfig?: {
     tabBarPosition?: TabBarPosition;
@@ -42,13 +33,21 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   };
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
   jumpMode?: JumpMode;
-  initialLayout?: Partial<Layout>;
+  initialLayout?: {
+    tabView?: Partial<Layout>;
+    tabViewHeader?: Partial<Layout>;
+  };
   sceneContainerStyle?: StyleProp<ViewStyle>;
   sceneContainerGap?: number;
   style?: StyleProp<ViewStyle>;
   keyboardDismissMode?: KeyboardDismissMode;
   swipeEnabled?: boolean;
   renderMode?: RenderMode;
+  TabViewHeaderComponent?: React.ReactNode;
   onSwipeStart?: () => void;
   onSwipeEnd?: () => void;
+};
+
+export type TabViewImperativeHandle = {
+  jumpTo: (routeKey: string) => void;
 };

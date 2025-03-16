@@ -13,8 +13,10 @@ type InternalContext = {
   routes: Route[];
   noOfRoutes: number;
   tabViewLayout: Layout;
+  tabViewHeaderLayout: Layout;
   jumpTo: (routeKey: string) => void;
   setTabViewLayout: React.Dispatch<React.SetStateAction<Layout>>;
+  setTabViewHeaderLayout: React.Dispatch<React.SetStateAction<Layout>>;
 };
 
 const InternalContext = createContext<InternalContext>({
@@ -25,9 +27,11 @@ const InternalContext = createContext<InternalContext>({
   routes: [],
   noOfRoutes: 0,
   tabViewLayout: { width: 0, height: 0 },
+  tabViewHeaderLayout: { width: 0, height: 0 },
   setCurrentRouteIndex: noop,
   jumpTo: noop,
   setTabViewLayout: noop,
+  setTabViewHeaderLayout: noop,
 });
 
 type InternalContextProviderProps = {

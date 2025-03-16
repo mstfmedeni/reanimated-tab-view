@@ -18,6 +18,7 @@ import {
   CarouselContextProvider,
   useCarouselContext,
 } from '../providers/Carousel';
+import { Scene } from './Scene';
 
 export type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
@@ -35,13 +36,8 @@ const TabViewCarouselWithoutProviders = React.memo(
       onSwipeEnd,
     } = usePropsContext();
 
-    const {
-      tabViewLayout,
-      initialRouteIndex,
-      currentRouteIndex,
-      animatedRouteIndex,
-      setCurrentRouteIndex,
-    } = useInternalContext();
+    const { initialRouteIndex, currentRouteIndex, setCurrentRouteIndex } =
+      useInternalContext();
 
     const { translationPerSceneContainer } = useCarouselContext();
     //#endregion
@@ -125,12 +121,7 @@ const TabViewCarouselWithoutProviders = React.memo(
                       }
                       onMount={() => handleSceneMount(index)}
                     >
-                      {renderScene({
-                        layout: tabViewLayout,
-                        route,
-                        animatedRouteIndex,
-                        jumpTo: jumpToRoute,
-                      })}
+                      <Scene renderScene={renderScene} route={route} />
                     </LazyLoader>
                   )}
                 </SceneWrapper>

@@ -1,10 +1,19 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import TabViewCarousel, {
   type CarouselImperativeHandle,
 } from './TabViewCarousel';
-import { type TabViewProps } from '../types/TabView';
+import {
+  type TabViewImperativeHandle,
+  type TabViewProps,
+} from '../types/TabView';
 import type { LayoutChangeEvent } from 'react-native';
 import type { Layout } from '../types/common';
 import { TabBar } from './TabBar';
@@ -17,143 +26,205 @@ import { PropsContextProvider, usePropsContext } from '../providers/Props';
 import { SCROLLABLE_TAB_WIDTH } from '../constants/tabBar';
 import useHandleIndexChange from '../hooks/useHandlerIndexChange';
 
-export const TabViewWithoutProviders = React.memo(() => {
-  const { tabBarPosition, tabBarStyle, tabStyle, renderTabBar } =
-    usePropsContext();
+type TabViewWithoutProvidersProps = {
+  TabViewHeaderComponent?: React.ReactNode;
+};
+export const TabViewWithoutProviders = React.memo<TabViewWithoutProvidersProps>(
+  ({ TabViewHeaderComponent }) => {
+    const { tabBarPosition, tabBarStyle, tabStyle, renderTabBar } =
+      usePropsContext();
 
-  const { tabViewLayout, tabViewCarouselRef, setTabViewLayout } =
-    useInternalContext();
+    const {
+      tabViewLayout,
+      tabViewCarouselRef,
+      setTabViewLayout,
+      setTabViewHeaderLayout,
+    } = useInternalContext();
 
-  //#region styles
-  const containerLayoutStyle = useMemo(() => {
-    const width: number | `${number}%` = tabViewLayout?.width || '100%';
-    return { width };
-  }, [tabViewLayout]);
-  //#endregion
+    //#region styles
+    const containerLayoutStyle = useMemo(() => {
+      const width: number | `${number}%` = tabViewLayout?.width || '100%';
+      return { width };
+    }, [tabViewLayout]);
+    //#endregion
 
-  //#region hooks
-  useHandleIndexChange();
-  //#endregion
+    //#region hooks
+    useHandleIndexChange();
+    //#endregion
 
-  //#region callbacks
-  const onTabViewLayout = useCallback(
-    ({ nativeEvent }: LayoutChangeEvent) => {
-      const { width, height } = nativeEvent.layout;
-      setTabViewLayout((prevLayout) => ({
-        ...prevLayout,
-        width,
-        height,
-      }));
-    },
-    [setTabViewLayout]
-  );
-  //#endregion
-
-  //#region render memos
-  const tabBar = useMemo(() => {
-    if (renderTabBar) {
-      return renderTabBar({
-        getLabelText: (scene) => scene.route.title,
-        tabStyle,
-        style: tabBarStyle,
-      });
-    }
-    return (
-      <TabBar
-        getLabelText={(scene) => scene.route.title}
-        tabStyle={tabStyle}
-        style={tabBarStyle}
-      />
+    //#region callbacks
+    const onTabViewLayout = useCallback(
+      ({ nativeEvent }: LayoutChangeEvent) => {
+        const { width, height } = nativeEvent.layout;
+        setTabViewLayout((prevLayout) => ({
+          ...prevLayout,
+          width,
+          height,
+        }));
+      },
+      [setTabViewLayout]
     );
-  }, [renderTabBar, tabStyle, tabBarStyle]);
-  //#endregion
 
-  //#region render
-  return (
-    <View
-      style={[styles.containerLayout, containerLayoutStyle]}
-      onLayout={onTabViewLayout}
-    >
-      {tabBarPosition === 'top' && tabBar}
-      <TabViewCarousel ref={tabViewCarouselRef} />
-      {tabBarPosition === 'bottom' && tabBar}
-    </View>
-  );
-  //#endregion
-});
+    const onTabViewHeaderLayout = useCallback(
+      ({ nativeEvent }: LayoutChangeEvent) => {
+        const { width, height } = nativeEvent.layout;
+        setTabViewHeaderLayout((prevLayout) => ({
+          ...prevLayout,
+          width,
+          height,
+        }));
+      },
+      [setTabViewHeaderLayout]
+    );
+    //#endregion
 
-export const TabView = React.memo<TabViewProps>((props) => {
-  //#region props
-  const {
-    navigationState,
-    initialLayout,
-    animatedRouteIndex: providedAnimatedRouteIndexSV,
-    sceneContainerStyle,
-    keyboardDismissMode = 'auto',
-    swipeEnabled = true,
-    renderMode = 'all',
-    tabBarConfig,
-    jumpMode = 'smooth',
-    sceneContainerGap = 0,
-    renderScene,
-    onIndexChange,
-    onSwipeEnd,
-    onSwipeStart,
-  } = props;
+    //#region render memos
+    const tabBar = useMemo(() => {
+      if (renderTabBar) {
+        return renderTabBar({
+          getLabelText: (scene) => scene.route.title,
+          tabStyle,
+          style: tabBarStyle,
+        });
+      }
+      return (
+        <TabBar
+          getLabelText={(scene) => scene.route.title}
+          tabStyle={tabStyle}
+          style={tabBarStyle}
+        />
+      );
+    }, [renderTabBar, tabStyle, tabBarStyle]);
+    //#endregion
 
-  const {
-    tabBarType = 'secondary',
-    tabBarPosition = 'top',
-    tabBarScrollEnabled = false,
-    tabBarDynamicWidthEnabled: _tabBarDynamicWidthEnabled,
-    scrollableTabWidth = SCROLLABLE_TAB_WIDTH,
-    tabBarStyle,
-    tabBarIndicatorStyle,
-    tabStyle,
-    renderTabBar,
-  } = tabBarConfig ?? {};
-  //#endregion
+    //#region render
+    return (
+      <View
+        style={[styles.container, containerLayoutStyle]}
+        onLayout={onTabViewLayout}
+      >
+        <View onLayout={onTabViewHeaderLayout}>{TabViewHeaderComponent}</View>
+        <View style={styles.content}>
+          {tabBarPosition === 'top' && tabBar}
+          <TabViewCarousel ref={tabViewCarouselRef} />
+          {tabBarPosition === 'bottom' && tabBar}
+        </View>
+      </View>
+    );
+    //#endregion
+  }
+);
 
-  //#region variables
-  const [tabViewLayout, setTabViewLayout] = useState<Layout>({
-    width: 0,
-    height: 0,
-    ...initialLayout,
-  });
+export const TabView = React.memo<TabViewProps>(
+  React.forwardRef<TabViewImperativeHandle, TabViewProps>((props, ref) => {
+    //#region props
+    const {
+      navigationState,
+      initialLayout,
+      animatedRouteIndex: providedAnimatedRouteIndexSV,
+      sceneContainerStyle,
+      keyboardDismissMode = 'auto',
+      swipeEnabled = true,
+      renderMode = 'all',
+      tabBarConfig,
+      jumpMode = 'smooth',
+      sceneContainerGap = 0,
+      TabViewHeaderComponent,
+      renderScene,
+      onIndexChange,
+      onSwipeEnd,
+      onSwipeStart,
+    } = props;
 
-  const tabViewCarouselRef = useRef<CarouselImperativeHandle>(null);
+    const {
+      tabBarType = 'secondary',
+      tabBarPosition = 'top',
+      tabBarScrollEnabled = false,
+      tabBarDynamicWidthEnabled: _tabBarDynamicWidthEnabled,
+      scrollableTabWidth = SCROLLABLE_TAB_WIDTH,
+      tabBarStyle,
+      tabBarIndicatorStyle,
+      tabStyle,
+      renderTabBar,
+    } = tabBarConfig ?? {};
+    //#endregion
 
-  const animatedRouteIndex = useSharedValue(navigationState.index);
+    //#region variables
+    const [tabViewLayout, setTabViewLayout] = useState<Layout>({
+      width: 0,
+      height: 0,
+      ...initialLayout?.tabView,
+    });
 
-  const [initialRouteIndex] = useState(navigationState.index);
-  const [currentRouteIndex, setCurrentRouteIndex] = useState(initialRouteIndex);
+    const [tabViewHeaderLayout, setTabViewHeaderLayout] = useState<Layout>({
+      width: initialLayout?.tabView?.width ?? 0,
+      height: 0,
+      ...initialLayout?.tabViewHeader,
+    });
 
-  const routes = useMemo(
-    () => navigationState.routes,
-    [navigationState.routes]
-  );
-  const noOfRoutes = routes.length;
+    const tabViewCarouselRef = useRef<CarouselImperativeHandle>(null);
 
-  const tabBarDynamicWidthEnabled = useMemo(() => {
-    if (_tabBarDynamicWidthEnabled !== undefined) {
-      return _tabBarDynamicWidthEnabled;
-    }
-    if (tabBarType === 'primary') {
-      return true;
-    }
-    return false;
-  }, [_tabBarDynamicWidthEnabled, tabBarType]);
-  //#endregion
+    const animatedRouteIndex = useSharedValue(navigationState.index);
 
-  //#region handlers
-  const jumpTo = useCallback((routeKey: string) => {
-    tabViewCarouselRef.current?.jumpToRoute(routeKey);
-  }, []);
-  //#endregion
+    const [initialRouteIndex] = useState(navigationState.index);
+    const [currentRouteIndex, setCurrentRouteIndex] =
+      useState(initialRouteIndex);
 
-  //#region context
-  const propsContextValue = useMemo(() => {
-    return {
+    const routes = useMemo(
+      () => navigationState.routes,
+      [navigationState.routes]
+    );
+    const noOfRoutes = routes.length;
+
+    const tabBarDynamicWidthEnabled = useMemo(() => {
+      if (_tabBarDynamicWidthEnabled !== undefined) {
+        return _tabBarDynamicWidthEnabled;
+      }
+      if (tabBarType === 'primary') {
+        return true;
+      }
+      return false;
+    }, [_tabBarDynamicWidthEnabled, tabBarType]);
+    //#endregion
+
+    //#region handlers
+    const jumpTo = useCallback((routeKey: string) => {
+      tabViewCarouselRef.current?.jumpToRoute(routeKey);
+    }, []);
+    //#endregion
+
+    //#region hooks
+    useImperativeHandle(ref, () => ({
+      jumpTo,
+    }));
+    //#endregion
+
+    //#region context
+    const propsContextValue = useMemo(() => {
+      return {
+        navigationState,
+        renderMode,
+        tabBarType,
+        tabBarPosition,
+        tabBarScrollEnabled,
+        tabBarDynamicWidthEnabled,
+        scrollableTabWidth,
+        tabBarStyle,
+        tabBarIndicatorStyle,
+        tabStyle,
+        swipeEnabled,
+        jumpMode,
+        sceneContainerGap,
+        sceneContainerStyle,
+        keyboardDismissMode,
+        providedAnimatedRouteIndexSV,
+        renderTabBar,
+        renderScene,
+        onIndexChange,
+        onSwipeEnd,
+        onSwipeStart,
+      };
+    }, [
       navigationState,
       renderMode,
       tabBarType,
@@ -175,71 +246,58 @@ export const TabView = React.memo<TabViewProps>((props) => {
       onIndexChange,
       onSwipeEnd,
       onSwipeStart,
-    };
-  }, [
-    navigationState,
-    renderMode,
-    tabBarType,
-    tabBarPosition,
-    tabBarScrollEnabled,
-    tabBarDynamicWidthEnabled,
-    scrollableTabWidth,
-    tabBarStyle,
-    tabBarIndicatorStyle,
-    tabStyle,
-    swipeEnabled,
-    jumpMode,
-    sceneContainerGap,
-    sceneContainerStyle,
-    keyboardDismissMode,
-    providedAnimatedRouteIndexSV,
-    renderTabBar,
-    renderScene,
-    onIndexChange,
-    onSwipeEnd,
-    onSwipeStart,
-  ]);
+    ]);
 
-  const internalContextValue = useMemo(() => {
-    return {
+    const internalContextValue = useMemo(() => {
+      return {
+        tabViewLayout,
+        tabViewHeaderLayout,
+        tabViewCarouselRef,
+        routes,
+        noOfRoutes,
+        animatedRouteIndex,
+        initialRouteIndex,
+        currentRouteIndex,
+        setCurrentRouteIndex,
+        jumpTo,
+        setTabViewLayout,
+        setTabViewHeaderLayout,
+      };
+    }, [
       tabViewLayout,
+      tabViewHeaderLayout,
       tabViewCarouselRef,
       routes,
       noOfRoutes,
       animatedRouteIndex,
-      initialRouteIndex,
       currentRouteIndex,
       setCurrentRouteIndex,
+      initialRouteIndex,
       jumpTo,
       setTabViewLayout,
-    };
-  }, [
-    tabViewLayout,
-    tabViewCarouselRef,
-    routes,
-    noOfRoutes,
-    animatedRouteIndex,
-    currentRouteIndex,
-    setCurrentRouteIndex,
-    initialRouteIndex,
-    jumpTo,
-    setTabViewLayout,
-  ]);
-  //#endregion
+      setTabViewHeaderLayout,
+    ]);
+    //#endregion
 
-  return (
-    <PropsContextProvider value={propsContextValue}>
-      <InternalContextProvider value={internalContextValue}>
-        <TabLayoutContextProvider>
-          <TabViewWithoutProviders />
-        </TabLayoutContextProvider>
-      </InternalContextProvider>
-    </PropsContextProvider>
-  );
-});
+    return (
+      <PropsContextProvider value={propsContextValue}>
+        <InternalContextProvider value={internalContextValue}>
+          <TabLayoutContextProvider>
+            <TabViewWithoutProviders
+              TabViewHeaderComponent={TabViewHeaderComponent}
+            />
+          </TabLayoutContextProvider>
+        </InternalContextProvider>
+      </PropsContextProvider>
+    );
+  })
+);
 
 const styles = StyleSheet.create({
-  containerLayout: {
+  container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
   },
 });

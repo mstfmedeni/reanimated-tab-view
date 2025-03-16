@@ -6,11 +6,7 @@ import type {
   KeyboardDismissMode,
   JumpMode,
 } from '../types/TabView';
-import type {
-  NavigationState,
-  Route,
-  SceneRendererProps,
-} from '../types/common';
+import type { NavigationState, SceneRendererProps } from '../types/common';
 import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
 import { noop } from '../constants/common';
@@ -25,6 +21,7 @@ type PropsContext = {
   tabBarPosition: TabBarPosition;
   tabBarScrollEnabled: boolean;
   tabBarDynamicWidthEnabled: boolean;
+  tabBarIndicatorStyle: StyleProp<ViewStyle>;
   tabBarStyle: StyleProp<ViewStyle>;
   tabStyle: StyleProp<ViewStyle>;
   scrollableTabWidth: number;
@@ -35,11 +32,7 @@ type PropsContext = {
   keyboardDismissMode?: KeyboardDismissMode;
   providedAnimatedRouteIndexSV?: SharedValue<number>;
   renderTabBar?: (props: TabBarProps) => React.ReactNode;
-  renderScene: (
-    props: SceneRendererProps & {
-      route: Route;
-    }
-  ) => React.ReactNode;
+  renderScene: (props: SceneRendererProps) => React.ReactNode;
   onIndexChange?: (index: number) => void;
   onSwipeEnd?: () => void;
   onSwipeStart?: () => void;
@@ -55,6 +48,7 @@ const PropsContext = createContext<PropsContext>({
   tabBarPosition: 'top',
   tabBarScrollEnabled: false,
   tabBarDynamicWidthEnabled: false,
+  tabBarIndicatorStyle: undefined,
   scrollableTabWidth: SCROLLABLE_TAB_WIDTH,
   tabBarStyle: undefined,
   tabStyle: undefined,
