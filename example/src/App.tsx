@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   TabView as ReanimatedTabView,
   type NavigationState,
+  type TabViewMethods,
 } from 'reanimated-tab-view';
 import {
   TabView as TabView,
@@ -79,6 +80,11 @@ export default function App() {
     }
   );
 
+  const initialLayout = React.useMemo(
+    () => ({ tabView: initialTabViewLayout }),
+    []
+  );
+
   const renderScene = React.useCallback(({ route }) => {
     return (
       <Scene
@@ -92,6 +98,8 @@ export default function App() {
     setNavigationState((state) => ({ ...state, index }));
   }, []);
 
+  const tabViewRef = React.useRef<TabViewMethods>(null);
+
   return (
     <GestureHandlerRootView style={styles.gestureHandlerRootView}>
       <SafeAreaView style={styles.container}>
@@ -103,10 +111,11 @@ export default function App() {
         <Button onPress={toggleShowReanimatedTabView} title="TOGGLE" />
         {showReanimatedTabView ? (
           <ReanimatedTabView
+            ref={tabViewRef}
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
             renderScene={renderScene}
-            initialLayout={initialTabViewLayout}
+            initialLayout={initialLayout}
           />
         ) : (
           <TabView

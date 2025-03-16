@@ -10,10 +10,7 @@ import { useSharedValue } from 'react-native-reanimated';
 import TabViewCarousel, {
   type CarouselImperativeHandle,
 } from './TabViewCarousel';
-import {
-  type TabViewImperativeHandle,
-  type TabViewProps,
-} from '../types/TabView';
+import { type TabViewMethods, type TabViewProps } from '../types/TabView';
 import type { LayoutChangeEvent } from 'react-native';
 import type { Layout } from '../types/common';
 import { TabBar } from './TabBar';
@@ -115,8 +112,8 @@ export const TabViewWithoutProviders = React.memo<TabViewWithoutProvidersProps>(
   }
 );
 
-export const TabView = React.memo<TabViewProps>(
-  React.forwardRef<TabViewImperativeHandle, TabViewProps>((props, ref) => {
+export const TabView = React.memo(
+  React.forwardRef<TabViewMethods, TabViewProps>((props, ref) => {
     //#region props
     const {
       navigationState,

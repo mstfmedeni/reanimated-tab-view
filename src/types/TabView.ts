@@ -48,6 +48,6 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   onSwipeEnd?: () => void;
 };
 
-export type TabViewImperativeHandle = {
+export type TabViewMethods = {
   jumpTo: (routeKey: string) => void;
 };
