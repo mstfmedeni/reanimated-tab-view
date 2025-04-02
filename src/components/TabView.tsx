@@ -6,7 +6,9 @@ import React, {
   useState,
 } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import Animated, { useSharedValue } from 'react-native-reanimated';
+import { GestureDetector } from 'react-native-gesture-handler';
+
 import TabViewCarousel, {
   type CarouselImperativeHandle,
 } from './TabViewCarousel';
@@ -20,97 +22,98 @@ import {
   useInternalContext,
 } from '../providers/Internal';
 import { PropsContextProvider, usePropsContext } from '../providers/Props';
-import { SCROLLABLE_TAB_WIDTH } from '../constants/tabBar';
+import { SCROLLABLE_TAB_WIDTH, TAB_BAR_HEIGHT } from '../constants/tabBar';
 import useHandleIndexChange from '../hooks/useHandlerIndexChange';
+import { TabViewHeader } from './TabViewHeader';
+import { ScrollableContextProvider } from '../providers/Scrollable';
+import { useGestureContentTranslateYStyle } from '../hooks/scrollable/useGestureContentTranslateYStyle';
+import { useScrollLikePanGesture } from '../hooks/scrollable/useScrollLikePanGesture';
 
-type TabViewWithoutProvidersProps = {
-  TabViewHeaderComponent?: React.ReactNode;
-};
-export const TabViewWithoutProviders = React.memo<TabViewWithoutProvidersProps>(
-  ({ TabViewHeaderComponent }) => {
-    const { tabBarPosition, tabBarStyle, tabStyle, renderTabBar } =
-      usePropsContext();
+export const TabViewWithoutProviders = React.memo(() => {
+  //#region context
+  const { tabBarPosition, tabBarStyle, tabStyle, renderTabBar } =
+    usePropsContext();
 
-    const {
-      tabViewLayout,
-      tabViewCarouselRef,
-      setTabViewLayout,
-      setTabViewHeaderLayout,
-    } = useInternalContext();
+  const { tabViewLayout, tabViewCarouselRef, setTabViewLayout } =
+    useInternalContext();
+  //#endregion
 
-    //#region styles
-    const containerLayoutStyle = useMemo(() => {
-      const width: number | `${number}%` = tabViewLayout?.width || '100%';
-      return { width };
-    }, [tabViewLayout]);
-    //#endregion
+  //#region styles
+  const containerLayoutStyle = useMemo(() => {
+    const width: number | `${number}%` = tabViewLayout?.width || '100%';
+    return { width };
+  }, [tabViewLayout]);
 
-    //#region hooks
-    useHandleIndexChange();
-    //#endregion
+  const contentStyle = useMemo(() => {
+    return tabViewLayout.height
+      ? {
+          height: tabViewLayout.height,
+        }
+      : { flex: 1 };
+  }, [tabViewLayout]);
 
-    //#region callbacks
-    const onTabViewLayout = useCallback(
-      ({ nativeEvent }: LayoutChangeEvent) => {
-        const { width, height } = nativeEvent.layout;
-        setTabViewLayout((prevLayout) => ({
-          ...prevLayout,
-          width,
-          height,
-        }));
-      },
-      [setTabViewLayout]
-    );
+  const animatedTranslateYStyle = useGestureContentTranslateYStyle();
+  //#endregion
 
-    const onTabViewHeaderLayout = useCallback(
-      ({ nativeEvent }: LayoutChangeEvent) => {
-        const { width, height } = nativeEvent.layout;
-        setTabViewHeaderLayout((prevLayout) => ({
-          ...prevLayout,
-          width,
-          height,
-        }));
-      },
-      [setTabViewHeaderLayout]
-    );
-    //#endregion
+  //#region variables
+  const scrollLikePanGesture = useScrollLikePanGesture();
+  //#endregion
 
-    //#region render memos
-    const tabBar = useMemo(() => {
-      if (renderTabBar) {
-        return renderTabBar({
-          getLabelText: (scene) => scene.route.title,
-          tabStyle,
-          style: tabBarStyle,
-        });
-      }
-      return (
-        <TabBar
-          getLabelText={(scene) => scene.route.title}
-          tabStyle={tabStyle}
-          style={tabBarStyle}
-        />
-      );
-    }, [renderTabBar, tabStyle, tabBarStyle]);
-    //#endregion
+  //#region hooks
+  useHandleIndexChange();
+  //#endregion
 
-    //#region render
+  //#region callbacks
+  const onTabViewLayout = useCallback(
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      const { width, height } = nativeEvent.layout;
+      setTabViewLayout((prevLayout) => ({
+        ...prevLayout,
+        width,
+        height,
+      }));
+    },
+    [setTabViewLayout]
+  );
+  //#endregion
+
+  //#region render memos
+  const tabBar = useMemo(() => {
+    if (renderTabBar) {
+      return renderTabBar({
+        getLabelText: (scene) => scene.route.title,
+        tabStyle,
+        style: tabBarStyle,
+      });
+    }
     return (
+      <TabBar
+        getLabelText={(scene) => scene.route.title}
+        tabStyle={tabStyle}
+        style={tabBarStyle}
+      />
+    );
+  }, [renderTabBar, tabStyle, tabBarStyle]);
+  //#endregion
+
+  //#region render
+  return (
+    <GestureDetector gesture={scrollLikePanGesture}>
       <View
         style={[styles.container, containerLayoutStyle]}
         onLayout={onTabViewLayout}
       >
-        <View onLayout={onTabViewHeaderLayout}>{TabViewHeaderComponent}</View>
-        <View style={styles.content}>
+        <TabViewHeader style={animatedTranslateYStyle} />
+        <Animated.View style={[contentStyle, animatedTranslateYStyle]}>
           {tabBarPosition === 'top' && tabBar}
           <TabViewCarousel ref={tabViewCarouselRef} />
           {tabBarPosition === 'bottom' && tabBar}
-        </View>
+        </Animated.View>
       </View>
-    );
-    //#endregion
-  }
-);
+    </GestureDetector>
+  );
+  //#endregion
+});
 
 export const TabView = React.memo(
   React.forwardRef<TabViewMethods, TabViewProps>((props, ref) => {
@@ -126,7 +129,7 @@ export const TabView = React.memo(
       tabBarConfig,
       jumpMode = 'smooth',
       sceneContainerGap = 0,
-      TabViewHeaderComponent,
+      renderHeader,
       renderScene,
       onIndexChange,
       onSwipeEnd,
@@ -151,6 +154,16 @@ export const TabView = React.memo(
       width: 0,
       height: 0,
       ...initialLayout?.tabView,
+    });
+
+    const [tabBarLayout, setTabBarLayout] = useState<Layout>({
+      width: tabViewLayout.width,
+      height: TAB_BAR_HEIGHT,
+    });
+
+    const [tabViewCarouselLayout, setTabViewCarouselLayout] = useState<Layout>({
+      width: tabViewLayout.width,
+      height: tabViewLayout.height - tabBarLayout.height,
     });
 
     const [tabViewHeaderLayout, setTabViewHeaderLayout] = useState<Layout>({
@@ -217,6 +230,7 @@ export const TabView = React.memo(
         providedAnimatedRouteIndexSV,
         renderTabBar,
         renderScene,
+        renderHeader,
         onIndexChange,
         onSwipeEnd,
         onSwipeStart,
@@ -240,6 +254,7 @@ export const TabView = React.memo(
       providedAnimatedRouteIndexSV,
       renderTabBar,
       renderScene,
+      renderHeader,
       onIndexChange,
       onSwipeEnd,
       onSwipeStart,
@@ -249,6 +264,8 @@ export const TabView = React.memo(
       return {
         tabViewLayout,
         tabViewHeaderLayout,
+        tabBarLayout,
+        tabViewCarouselLayout,
         tabViewCarouselRef,
         routes,
         noOfRoutes,
@@ -259,10 +276,14 @@ export const TabView = React.memo(
         jumpTo,
         setTabViewLayout,
         setTabViewHeaderLayout,
+        setTabBarLayout,
+        setTabViewCarouselLayout,
       };
     }, [
       tabViewLayout,
       tabViewHeaderLayout,
+      tabBarLayout,
+      tabViewCarouselLayout,
       tabViewCarouselRef,
       routes,
       noOfRoutes,
@@ -273,6 +294,8 @@ export const TabView = React.memo(
       jumpTo,
       setTabViewLayout,
       setTabViewHeaderLayout,
+      setTabBarLayout,
+      setTabViewCarouselLayout,
     ]);
     //#endregion
 
@@ -280,9 +303,9 @@ export const TabView = React.memo(
       <PropsContextProvider value={propsContextValue}>
         <InternalContextProvider value={internalContextValue}>
           <TabLayoutContextProvider>
-            <TabViewWithoutProviders
-              TabViewHeaderComponent={TabViewHeaderComponent}
-            />
+            <ScrollableContextProvider>
+              <TabViewWithoutProviders />
+            </ScrollableContextProvider>
           </TabLayoutContextProvider>
         </InternalContextProvider>
       </PropsContextProvider>
@@ -293,8 +316,6 @@ export const TabView = React.memo(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
+    overflow: 'hidden',
   },
 });
