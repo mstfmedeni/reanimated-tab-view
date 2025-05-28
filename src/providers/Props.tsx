@@ -17,6 +17,7 @@ import { noop } from '../constants/common';
 import type { TabBarProps } from '../types';
 import { SCROLLABLE_TAB_WIDTH } from '../constants/tabBar';
 import type { SharedValue } from 'react-native-reanimated';
+import type { TextStyle } from 'react-native';
 
 type PropsContext = {
   navigationState: NavigationState;
@@ -28,6 +29,7 @@ type PropsContext = {
   tabBarIndicatorStyle: StyleProp<ViewStyle>;
   tabBarStyle: StyleProp<ViewStyle>;
   tabStyle: StyleProp<ViewStyle>;
+  tabLabelStyle: StyleProp<TextStyle>;
   scrollableTabWidth: number;
   swipeEnabled: boolean;
   jumpMode: JumpMode;
@@ -57,6 +59,7 @@ const PropsContext = createContext<PropsContext>({
   scrollableTabWidth: SCROLLABLE_TAB_WIDTH,
   tabBarStyle: undefined,
   tabStyle: undefined,
+  tabLabelStyle: undefined,
   swipeEnabled: true,
   jumpMode: 'smooth',
   sceneContainerGap: 0,

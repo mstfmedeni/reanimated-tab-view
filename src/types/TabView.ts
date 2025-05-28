@@ -9,6 +9,7 @@ import type {
 } from './common';
 import type { TabBarProps } from './TabBar';
 import type { SharedValue } from 'react-native-reanimated';
+import type { TextStyle } from 'react-native';
 
 export type TabBarType = 'primary' | 'secondary';
 
@@ -34,6 +35,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
     tabBarStyle?: StyleProp<ViewStyle>;
     tabBarIndicatorStyle?: StyleProp<ViewStyle>;
     tabStyle?: StyleProp<ViewStyle>;
+    tabLabelStyle?: StyleProp<TextStyle>;
     renderTabBar?: (props: TabBarProps) => React.ReactNode;
   };
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;
