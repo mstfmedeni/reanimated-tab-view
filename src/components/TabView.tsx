@@ -40,7 +40,9 @@ export const TabView = React.memo((props: TabViewProps) => {
 
   const onLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
     const { width, height } = nativeEvent.layout;
-    setLayout((prevLayout) => ({ ...prevLayout, width, height }));
+    if (layout?.width != width) {
+      setLayout((prevLayout) => ({ ...prevLayout, width, height }));
+    }
   }, []);
 
   const containerLayoutStyle = useMemo(() => {
