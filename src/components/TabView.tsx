@@ -67,11 +67,9 @@ export const TabViewWithoutProviders = React.memo(() => {
   const onTabViewLayout = useCallback(
     ({ nativeEvent }: LayoutChangeEvent) => {
       const { width, height } = nativeEvent.layout;
-      setTabViewLayout((prevLayout) => ({
-        ...prevLayout,
-        width,
-        height,
-      }));
+      if (tabViewLayout?.width != width) {
+        setTabViewLayout((prevLayout) => ({ ...prevLayout, width, height }));
+      }
     },
     [setTabViewLayout]
   );
