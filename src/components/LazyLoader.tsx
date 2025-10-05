@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 type LazyLoaderProps = {
-  isLazyLoadingEnabled: boolean;
+  shouldLazyLoad: boolean;
   onMount: () => void;
   children?: React.ReactNode;
 };
 
 const LazyLoader: React.FC<LazyLoaderProps> = React.memo(
-  ({ isLazyLoadingEnabled, onMount, children }) => {
+  ({ shouldLazyLoad, onMount, children }) => {
     const [shouldRenderChildren, setShouldRenderChildren] = useState(false);
 
     useEffect(() => {
@@ -15,17 +15,14 @@ const LazyLoader: React.FC<LazyLoaderProps> = React.memo(
     }, [onMount]);
 
     useEffect(() => {
-      if (isLazyLoadingEnabled) {
+      if (shouldLazyLoad) {
         setTimeout(() => {
           setShouldRenderChildren(true);
         });
       }
-    }, [isLazyLoadingEnabled]);
+    }, [shouldLazyLoad]);
 
-    if (
-      !isLazyLoadingEnabled ||
-      (isLazyLoadingEnabled && shouldRenderChildren)
-    ) {
+    if (!shouldLazyLoad || (shouldLazyLoad && shouldRenderChildren)) {
       return <>{children}</>;
     }
     return null;

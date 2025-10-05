@@ -23,11 +23,10 @@ export type Layout = {
 };
 
 export type SceneRendererProps = {
-  layout: Layout;
-  animatedRouteIndex: SharedValue<number>;
-  jumpTo: (key: string) => void;
+  route: Route;
 };
 
-export type TabBarType = 'primary' | 'secondary';
-
-export type RenderMode = 'all' | 'windowed' | 'lazy';
+export type HeaderRendererProps = {
+  collapsedPercentage: SharedValue<number>;
+  collapsedHeaderHeight: SharedValue<number>;
+};

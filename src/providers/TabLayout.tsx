@@ -1,35 +1,46 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useSharedValue, type SharedValue, makeMutable } from 'react-native-reanimated';
 import type {
-  RouteIndexToTabBarItemWidthMap,
+  RouteIndexToTabContentWidthMap,
   RouteIndexToTabOffsetMap,
   RouteIndexToTabWidthMap,
 } from '../types/TabBar';
+import { noop } from '../constants/common';
 
 type TabLayoutContext = {
-  routeIndexToTabWidthMap: SharedValue<RouteIndexToTabWidthMap>;
-  routeIndexToTabOffsetMap: SharedValue<RouteIndexToTabOffsetMap>;
-  routeIndexToTabBarItemWidthMap: SharedValue<RouteIndexToTabBarItemWidthMap>;
+  routeIndexToTabContentWidthMap: RouteIndexToTabContentWidthMap;
+  setRouteIndexToTabContentWidthMap: React.Dispatch<
+    React.SetStateAction<RouteIndexToTabContentWidthMap>
+  >;
+  routeIndexToTabWidthMapSV: SharedValue<RouteIndexToTabWidthMap>;
+  routeIndexToTabOffsetMapSV: SharedValue<RouteIndexToTabOffsetMap>;
+  routeIndexToTabContentWidthMapSV: SharedValue<RouteIndexToTabContentWidthMap>;
 };
 
 const TabLayoutContext = createContext<TabLayoutContext>({
-  routeIndexToTabWidthMap: makeMutable({}),
-  routeIndexToTabOffsetMap: makeMutable({}),
-  routeIndexToTabBarItemWidthMap: makeMutable({}),
+  routeIndexToTabContentWidthMap: {},
+  setRouteIndexToTabContentWidthMap: noop,
+  routeIndexToTabWidthMapSV: makeMutable({}),
+  routeIndexToTabOffsetMapSV: makeMutable({}),
+  routeIndexToTabContentWidthMapSV: makeMutable({}),
 });
 
 export const TabLayoutContextProvider: React.FC<{ children?: React.ReactNode }> = React.memo(
   function TabLayoutContextProvider({ children }) {
-    const routeIndexToTabWidthMap = useSharedValue({});
-    const routeIndexToTabOffsetMap = useSharedValue({});
-    const routeIndexToTabBarItemWidthMap = useSharedValue({});
+    const [routeIndexToTabContentWidthMap, setRouteIndexToTabContentWidthMap] =
+      useState({});
+    const routeIndexToTabWidthMapSV = useSharedValue({});
+    const routeIndexToTabOffsetMapSV = useSharedValue({});
+    const routeIndexToTabContentWidthMapSV = useSharedValue({});
 
     return (
       <TabLayoutContext.Provider
         value={{
-          routeIndexToTabWidthMap,
-          routeIndexToTabOffsetMap,
-          routeIndexToTabBarItemWidthMap,
+          routeIndexToTabContentWidthMap,
+          setRouteIndexToTabContentWidthMap,
+          routeIndexToTabWidthMapSV,
+          routeIndexToTabOffsetMapSV,
+          routeIndexToTabContentWidthMapSV,
         }}
       >
         {children}

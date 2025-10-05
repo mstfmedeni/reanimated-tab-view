@@ -12,18 +12,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   TabView as ReanimatedTabView,
   type NavigationState,
-  type SceneRendererProps as ReanimatedSceneRendererProps,
+  type TabViewMethods,
 } from 'reanimated-tab-view';
 import {
   TabView as TabView,
   TabBar as ReactNavigationTabBar,
-  type TabBarProps,
-  type Route,
-  type SceneRendererProps as RNTabViewSceneRendererProps,
 } from 'react-native-tab-view';
 import converter from 'number-to-words';
-
-type CustomRoute = Route & { color: string };
 
 const randomColor = (() => {
   const randomInt = (min: number, max: number) => {
@@ -70,11 +65,11 @@ export default function App() {
   );
 
   const renderTabBar = React.useCallback(
-    (props: TabBarProps<CustomRoute>) => <ReactNavigationTabBar {...props} scrollEnabled />,
+    (props: any) => <ReactNavigationTabBar {...props} scrollEnabled />,
     []
   );
 
-  const [navigationState, setNavigationState] = React.useState<NavigationState<CustomRoute>>(
+  const [navigationState, setNavigationState] = React.useState<NavigationState>(
     {
       index: initialTabIndex,
       routes: [...Array(4).keys()].map((i) => ({
@@ -85,33 +80,25 @@ export default function App() {
     }
   );
 
-  const renderReanimatedScene = React.useCallback(
-    (props: ReanimatedSceneRendererProps & { route: CustomRoute }) => {
-      return (
-        <Scene
-          backgroundColor={props.route.color}
-          text={`Scene ${converter.toWords(parseInt(props.route.key, 10) + 1)}`}
-        />
-      );
-    },
+  const initialLayout = React.useMemo(
+    () => ({ tabView: initialTabViewLayout }),
     []
   );
 
-  const renderRNTabViewScene = React.useCallback(
-    (props: RNTabViewSceneRendererProps & { route: CustomRoute }) => {
-      return (
-        <Scene
-          backgroundColor={props.route.color}
-          text={`Scene ${converter.toWords(parseInt(props.route.key, 10) + 1)}`}
-        />
-      );
-    },
-    []
-  );
+  const renderScene = React.useCallback(({ route }: any) => {
+    return (
+      <Scene
+        backgroundColor={route.color}
+        text={`Scene ${converter.toWords(parseInt(route.key, 10) + 1)}`}
+      />
+    );
+  }, []);
 
   const handleIndexChange = React.useCallback((index: number) => {
     setNavigationState((state) => ({ ...state, index }));
   }, []);
+
+  const tabViewRef = React.useRef<TabViewMethods>(null);
 
   return (
     <GestureHandlerRootView style={styles.gestureHandlerRootView}>
@@ -124,16 +111,17 @@ export default function App() {
         <Button onPress={toggleShowReanimatedTabView} title="TOGGLE" />
         {showReanimatedTabView ? (
           <ReanimatedTabView
+            ref={tabViewRef}
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
-            renderScene={renderReanimatedScene}
-            initialLayout={initialTabViewLayout}
+            renderScene={renderScene}
+            initialLayout={initialLayout}
           />
         ) : (
           <TabView
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
-            renderScene={renderRNTabViewScene}
+            renderScene={renderScene}
             renderTabBar={renderTabBar}
             initialLayout={initialTabViewLayout}
             style={styles.tabView}
