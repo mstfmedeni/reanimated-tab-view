@@ -8,6 +8,7 @@ type TabProps = {
   index: number;
   noOfRoutes: number;
   style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
 };
 const Tab: React.FC<TabProps> = React.memo(
   ({ index, noOfRoutes, style, children }) => {

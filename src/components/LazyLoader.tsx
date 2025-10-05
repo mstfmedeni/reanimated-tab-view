@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 type LazyLoaderProps = {
   isLazyLoadingEnabled: boolean;
   onMount: () => void;
+  children?: React.ReactNode;
 };
 
 const LazyLoader: React.FC<LazyLoaderProps> = React.memo(

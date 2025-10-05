@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useSharedValue, type SharedValue } from 'react-native-reanimated';
+import { useSharedValue, type SharedValue, makeMutable } from 'react-native-reanimated';
 import type {
   RouteIndexToTabBarItemWidthMap,
   RouteIndexToTabOffsetMap,
@@ -13,12 +13,12 @@ type TabLayoutContext = {
 };
 
 const TabLayoutContext = createContext<TabLayoutContext>({
-  routeIndexToTabWidthMap: { value: {} },
-  routeIndexToTabOffsetMap: { value: {} },
-  routeIndexToTabBarItemWidthMap: { value: {} },
+  routeIndexToTabWidthMap: makeMutable({}),
+  routeIndexToTabOffsetMap: makeMutable({}),
+  routeIndexToTabBarItemWidthMap: makeMutable({}),
 });
 
-export const TabLayoutContextProvider: React.FC = React.memo(
+export const TabLayoutContextProvider: React.FC<{ children?: React.ReactNode }> = React.memo(
   function TabLayoutContextProvider({ children }) {
     const routeIndexToTabWidthMap = useSharedValue({});
     const routeIndexToTabOffsetMap = useSharedValue({});

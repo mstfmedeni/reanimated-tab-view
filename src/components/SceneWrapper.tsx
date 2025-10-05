@@ -11,6 +11,7 @@ type SceneWrapperProps = {
   prevRouteIndexSharedValue: SharedValue<number>;
   prevRouteTranslationX: SharedValue<number>;
   routeIndexToJumpToSharedValue: SharedValue<number | null>;
+  children?: React.ReactNode;
 };
 
 const SceneWrapper: React.FC<SceneWrapperProps> = React.memo(

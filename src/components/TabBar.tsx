@@ -34,7 +34,7 @@ const TabBar = React.memo((props: TabBarProps) => {
     style,
   } = props;
 
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlatList | null>(null);
 
   const { autoScrollToRouteIndex, handleScrollToIndexFailed } =
     useTabBarAutoScroll(flatListRef, currentRouteIndex, layout);

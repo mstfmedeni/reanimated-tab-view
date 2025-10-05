@@ -11,12 +11,12 @@ import type {
 } from './common';
 import type { TabBarProps } from './TabBar';
 
-export type TabViewProps = Omit<ViewProps, 'children'> & {
+export type TabViewProps<T extends Route = Route> = Omit<ViewProps, 'children'> & {
   onIndexChange: (index: number) => void;
-  navigationState: NavigationState;
+  navigationState: NavigationState<T>;
   renderScene: (
     props: SceneRendererProps & {
-      route: Route;
+      route: T;
     }
   ) => React.ReactNode;
   // renderLazyPlaceholder?: (props: { route: Route }) => React.ReactNode;

@@ -16,7 +16,7 @@ import {
 import { AUTO_SWIPE_COMPLETION_DURATION } from '../constants/carousel';
 import type { Route } from '../types/common';
 
-const ACTIVE_OFFSET_X = [-10, 10];
+const ACTIVE_OFFSET_X: [number, number] = [-10, 10];
 
 export const useCarouselSwipePanGesture = (
   currentRouteIndexSharedValue: SharedValue<number>,

@@ -20,13 +20,16 @@ import { Keyboard } from 'react-native';
 import { useCarouselLazyLoading } from '../hooks/useCarouselLazyLoading';
 import LazyLoader from './LazyLoader';
 import SceneWrapper from './SceneWrapper';
+import type { Route } from '../types/common';
 
 export type CarouselImperativeHandle = {
   jumpToRoute: (route: string) => void;
 };
 
-const TabViewCarousel = React.memo(
-  forwardRef<CarouselImperativeHandle, TabViewCarouselProps>((props, ref) => {
+function TabViewCarouselInner<T extends Route = Route>(
+  props: TabViewCarouselProps<T>,
+  ref: React.Ref<CarouselImperativeHandle>
+) {
     const {
       navigationState,
       renderScene,
@@ -201,8 +204,13 @@ const TabViewCarousel = React.memo(
         </View>
       </GestureDetector>
     );
-  })
-);
+}
+
+const TabViewCarousel = React.memo(
+  forwardRef(TabViewCarouselInner)
+) as <T extends Route = Route>(
+  props: TabViewCarouselProps<T> & { ref?: React.Ref<CarouselImperativeHandle> }
+) => React.ReactElement;
 
 export default TabViewCarousel;
 

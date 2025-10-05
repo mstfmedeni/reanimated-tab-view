@@ -6,13 +6,13 @@ import TabViewCarousel, {
 import { type TabViewProps } from '../types/TabView';
 import { View } from 'react-native';
 import type { LayoutChangeEvent } from 'react-native';
-import type { Layout } from '../types/common';
+import type { Layout, Route } from '../types/common';
 import { useSharedValue } from 'react-native-reanimated';
 import TabBar from './TabBar';
 import { StyleSheet } from 'react-native';
 import { TabLayoutContextProvider } from '../providers/TabLayout';
 
-export const TabView = React.memo((props: TabViewProps) => {
+function TabViewInner<T extends Route = Route>(props: TabViewProps<T>) {
   const {
     navigationState,
     initialLayout,
@@ -130,7 +130,11 @@ export const TabView = React.memo((props: TabViewProps) => {
       </View>
     </TabLayoutContextProvider>
   );
-});
+}
+
+export const TabView = React.memo(TabViewInner) as <T extends Route = Route>(
+  props: TabViewProps<T>
+) => React.ReactElement;
 
 const styles = StyleSheet.create({
   containerLayout: {

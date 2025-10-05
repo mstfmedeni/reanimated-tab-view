@@ -10,11 +10,11 @@ import type { ViewProps } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
 
-export type TabViewCarouselProps = Omit<ViewProps, 'children'> & {
-  navigationState: NavigationState;
+export type TabViewCarouselProps<T extends Route = Route> = Omit<ViewProps, 'children'> & {
+  navigationState: NavigationState<T>;
   renderScene: (
     props: SceneRendererProps & {
-      route: Route;
+      route: T;
     }
   ) => React.ReactNode;
   layout: Layout;

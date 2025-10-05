@@ -12,12 +12,18 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   TabView as ReanimatedTabView,
   type NavigationState,
+  type SceneRendererProps as ReanimatedSceneRendererProps,
 } from 'reanimated-tab-view';
 import {
   TabView as TabView,
   TabBar as ReactNavigationTabBar,
+  type TabBarProps,
+  type Route,
+  type SceneRendererProps as RNTabViewSceneRendererProps,
 } from 'react-native-tab-view';
 import converter from 'number-to-words';
+
+type CustomRoute = Route & { color: string };
 
 const randomColor = (() => {
   const randomInt = (min: number, max: number) => {
@@ -64,11 +70,11 @@ export default function App() {
   );
 
   const renderTabBar = React.useCallback(
-    (props) => <ReactNavigationTabBar {...props} scrollEnabled />,
+    (props: TabBarProps<CustomRoute>) => <ReactNavigationTabBar {...props} scrollEnabled />,
     []
   );
 
-  const [navigationState, setNavigationState] = React.useState<NavigationState>(
+  const [navigationState, setNavigationState] = React.useState<NavigationState<CustomRoute>>(
     {
       index: initialTabIndex,
       routes: [...Array(4).keys()].map((i) => ({
@@ -79,14 +85,29 @@ export default function App() {
     }
   );
 
-  const renderScene = React.useCallback(({ route }) => {
-    return (
-      <Scene
-        backgroundColor={route.color}
-        text={`Scene ${converter.toWords(parseInt(route.key, 10) + 1)}`}
-      />
-    );
-  }, []);
+  const renderReanimatedScene = React.useCallback(
+    (props: ReanimatedSceneRendererProps & { route: CustomRoute }) => {
+      return (
+        <Scene
+          backgroundColor={props.route.color}
+          text={`Scene ${converter.toWords(parseInt(props.route.key, 10) + 1)}`}
+        />
+      );
+    },
+    []
+  );
+
+  const renderRNTabViewScene = React.useCallback(
+    (props: RNTabViewSceneRendererProps & { route: CustomRoute }) => {
+      return (
+        <Scene
+          backgroundColor={props.route.color}
+          text={`Scene ${converter.toWords(parseInt(props.route.key, 10) + 1)}`}
+        />
+      );
+    },
+    []
+  );
 
   const handleIndexChange = React.useCallback((index: number) => {
     setNavigationState((state) => ({ ...state, index }));
@@ -105,14 +126,14 @@ export default function App() {
           <ReanimatedTabView
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
-            renderScene={renderScene}
+            renderScene={renderReanimatedScene}
             initialLayout={initialTabViewLayout}
           />
         ) : (
           <TabView
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
-            renderScene={renderScene}
+            renderScene={renderRNTabViewScene}
             renderTabBar={renderTabBar}
             initialLayout={initialTabViewLayout}
             style={styles.tabView}
