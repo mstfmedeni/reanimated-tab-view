@@ -8,13 +8,13 @@ export type Route = {
   testID?: string;
 };
 
-export type Scene = {
-  route: Route;
+export type Scene<T extends Route = Route> = {
+  route: T;
 };
 
-export type NavigationState = {
+export type NavigationState<T extends Route = Route> = {
   index: number;
-  routes: Route[];
+  routes: T[];
 };
 
 export type Layout = {

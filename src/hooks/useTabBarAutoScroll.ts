@@ -10,7 +10,7 @@ type AutoScrollToRouteIndexParams = {
 };
 
 export const useTabBarAutoScroll = (
-  flatListRef: RefObject<FlatList>,
+  flatListRef: RefObject<FlatList | null>,
   currentRouteIndex: number,
   layout: Layout
 ) => {
@@ -26,7 +26,7 @@ export const useTabBarAutoScroll = (
       };
       if (shouldScrollToIndex) {
         const width = routeIndexToTabWidthMapSV.value[routeIndex] ?? 0;
-        const viewOffset = layout.width / 2 - width / 2;
+        const viewOffset = Math.max(0, layout.width / 2 - width / 2);
         flatListRef.current?.scrollToIndex({
           index: routeIndex,
           viewOffset,
@@ -36,6 +36,8 @@ export const useTabBarAutoScroll = (
         let offset = routeIndexToTabOffsetMapSV.value[routeIndex] ?? 0;
         const width = routeIndexToTabWidthMapSV.value[routeIndex] ?? 0;
         offset -= layout.width / 2 - width / 2;
+        // Prevent scrolling to negative offset (past the start)
+        offset = Math.max(0, offset);
         flatListRef.current?.scrollToOffset({
           offset,
           animated,
@@ -64,6 +66,8 @@ export const useTabBarAutoScroll = (
       let offset = routeIndexToTabOffsetMapSV.value[routeIndex] ?? 0;
       const width = routeIndexToTabWidthMapSV.value[routeIndex] ?? 0;
       offset -= layout.width / 2 + width / 2;
+      // Prevent scrolling to negative offset (past the start)
+      offset = Math.max(0, offset);
       flatListRef.current?.scrollToOffset({
         offset,
       });

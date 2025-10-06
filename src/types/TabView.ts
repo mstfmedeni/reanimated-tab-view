@@ -25,6 +25,7 @@ export type TabViewProps = Omit<ViewProps, 'children'> & {
   onIndexChange: (index: number) => void;
   navigationState: NavigationState;
   renderScene: (props: SceneRendererProps) => React.ReactNode;
+  renderTabBar?: (props: TabBarProps) => React.ReactNode;
   animatedRouteIndex?: SharedValue<number>;
   tabBarConfig?: {
     tabBarPosition?: TabBarPosition;

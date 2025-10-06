@@ -65,7 +65,7 @@ export default function App() {
   );
 
   const renderTabBar = React.useCallback(
-    (props) => <ReactNavigationTabBar {...props} scrollEnabled />,
+    (props: any) => <ReactNavigationTabBar {...props} scrollEnabled />,
     []
   );
 
@@ -85,7 +85,7 @@ export default function App() {
     []
   );
 
-  const renderScene = React.useCallback(({ route }) => {
+  const renderScene = React.useCallback(({ route }: any) => {
     return (
       <Scene
         backgroundColor={route.color}

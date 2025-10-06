@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { useInternalContext } from './Internal';
-import { useSharedValue, type SharedValue } from 'react-native-reanimated';
+import { useSharedValue, type SharedValue, makeMutable } from 'react-native-reanimated';
 import { noop } from '../constants/common';
 
 type JumpContext = {
@@ -16,14 +16,14 @@ type JumpContext = {
 const JumpContext = createContext<JumpContext>({
   isJumping: false,
   setIsJumping: noop,
-  jumpEndRouteIndexSV: { value: null },
+  jumpEndRouteIndexSV: makeMutable<number | null>(null),
   smoothJumpStartRouteIndex: 0,
   setSmoothJumpStartRouteIndex: noop,
-  smoothJumpStartRouteIndexSV: { value: 0 },
-  smoothJumpStartRouteTranslationXSV: { value: 0 },
+  smoothJumpStartRouteIndexSV: makeMutable(0),
+  smoothJumpStartRouteTranslationXSV: makeMutable(0),
 });
 
-export const JumpContextProvider = React.memo(function JumpContextProvider({
+export const JumpContextProvider: React.FC<{ children?: React.ReactNode }> = React.memo(function JumpContextProvider({
   children,
 }) {
   //#region variables
