@@ -4,10 +4,18 @@ import type { ViewStyle } from 'react-native';
 import type { StyleProp } from 'react-native';
 import type { TextStyle } from 'react-native';
 import type { TabContentProps } from './TabContent';
+import type { SharedValue } from 'react-native-reanimated';
+
+export type TabBarItemProps = {
+  route: Route;
+  focused: boolean;
+  index: number;
+  activePercentage: SharedValue<number>;
+};
 
 export type TabBarProps = Omit<
   ScrollViewProps,
-  'children' | 'indicatorStyle'
+  'children' | 'indicatorStyle' | 'contentContainerStyle'
 > & {
   activeColor?: string;
   inactiveColor?: string;
@@ -15,12 +23,14 @@ export type TabBarProps = Omit<
   renderTabContent?: (
     props: TabContentProps & { route: Route }
   ) => React.ReactNode;
+  renderTabBarItem?: (props: TabBarItemProps) => React.ReactNode;
   onTabPress?: (scene: Scene) => void;
   onTabLongPress?: (scene: Scene) => void;
   tabContentStyle?: StyleProp<ViewStyle>;
   indicatorStyle?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
   tabStyle?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 export type RouteIndexToTabWidthMap = {

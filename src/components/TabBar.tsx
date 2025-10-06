@@ -25,8 +25,10 @@ export const TabBar = React.memo((props: TabBarProps) => {
     labelStyle,
     indicatorStyle,
     style: tabBarContainerStyle,
+    contentContainerStyle,
     getLabelText,
     renderTabContent,
+    renderTabBarItem,
     onTabPress,
     onTabLongPress,
     ...restProps
@@ -114,6 +116,7 @@ export const TabBar = React.memo((props: TabBarProps) => {
             !tabBarDynamicWidthEnabled && fixedTabWidthStyle,
             tabBarDynamicWidthEnabled &&
               !tabBarScrollEnabled &&
+              !contentContainerStyle &&
               extraPaddingHorizontalPerTabStyle,
           ]}
           onTabPress={handlePressTab}
@@ -124,7 +127,14 @@ export const TabBar = React.memo((props: TabBarProps) => {
             style={tabContentContainerStyle}
           >
             {(activePercentage) =>
-              renderTabContent ? (
+              renderTabBarItem ? (
+                renderTabBarItem({
+                  route,
+                  focused: routeIndex === currentRouteIndex,
+                  index: routeIndex,
+                  activePercentage,
+                })
+              ) : renderTabContent ? (
                 renderTabContent({
                   activePercentage,
                   route,
@@ -162,6 +172,8 @@ export const TabBar = React.memo((props: TabBarProps) => {
       getLabelText,
       labelStyle,
       tabStyle,
+      renderTabBarItem,
+      currentRouteIndex,
     ]
   );
 
@@ -172,7 +184,7 @@ export const TabBar = React.memo((props: TabBarProps) => {
 
   //#region render
   return (
-    <View style={[styles.tabBarContainer]}>
+    <View style={[styles.tabBarContainer, tabBarContainerStyle]}>
       {tabBarScrollEnabled ? (
         <FlatList
           ref={flatListRef}
@@ -186,12 +198,13 @@ export const TabBar = React.memo((props: TabBarProps) => {
           onScrollToIndexFailed={handleScrollToIndexFailed}
           ListHeaderComponent={tabIndicatorComponent}
           style={styles.tabBar}
+          contentContainerStyle={contentContainerStyle}
           onLayout={onTabBarLayout}
         />
       ) : (
         <View
           {...restProps}
-          style={[styles.tabBar, styles.nonScrollableTabBar]}
+          style={[styles.tabBar, styles.nonScrollableTabBar, contentContainerStyle]}
           onLayout={onTabBarLayout}
         >
           {routes.map((route, index) => (
@@ -209,7 +222,7 @@ export const TabBar = React.memo((props: TabBarProps) => {
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    backgroundColor: 'red',
+    backgroundColor: '#25A0F6',
     height: TAB_BAR_HEIGHT,
   },
   tabBar: {

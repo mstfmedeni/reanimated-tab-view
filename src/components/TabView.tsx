@@ -131,6 +131,7 @@ export const TabView = React.memo(
       sceneContainerGap = 0,
       renderHeader,
       renderScene,
+      renderTabBar: renderTabBarProp,
       onIndexChange,
       onSwipeEnd,
       onSwipeStart,
@@ -146,8 +147,11 @@ export const TabView = React.memo(
       tabBarIndicatorStyle,
       tabStyle,
       tabLabelStyle,
-      renderTabBar,
+      renderTabBar: renderTabBarConfig,
     } = tabBarConfig ?? {};
+
+    // Support renderTabBar from both root level and tabBarConfig
+    const renderTabBar = renderTabBarProp ?? renderTabBarConfig;
     //#endregion
 
     //#region variables
