@@ -172,7 +172,7 @@ export const TabBar = React.memo((props: TabBarProps) => {
 
   //#region render
   return (
-    <View style={[styles.tabBarContainer, tabBarContainerStyle]}>
+    <View style={[styles.tabBarContainer]}>
       {tabBarScrollEnabled ? (
         <FlatList
           ref={flatListRef}
@@ -209,7 +209,7 @@ export const TabBar = React.memo((props: TabBarProps) => {
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    backgroundColor: '#25A0F6',
+    backgroundColor: 'red',
     height: TAB_BAR_HEIGHT,
   },
   tabBar: {

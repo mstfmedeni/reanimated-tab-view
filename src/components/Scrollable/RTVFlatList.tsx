@@ -25,7 +25,7 @@ function _RTVFlatList<T>(
   return (
     <Animated.FlatList
       ref={flatListRef}
-      {...props}
+      {...(props as any)}
       renderScrollComponent={renderScrollComponent}
     />
   );
