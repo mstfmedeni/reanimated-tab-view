@@ -1,8 +1,22 @@
 # Reanimated Tab View
 
+> **Note**: This is a fork of [adithyavis/reanimated-tab-view](https://github.com/adithyavis/reanimated-tab-view) with additional features for custom TabBar rendering and improved customization options.
+
 A custom Tab View component implemented using [`react-native-reanimated`](https://github.com/software-mansion/react-native-reanimated/) and [`react-native-gesture-handler`](https://github.com/software-mansion/react-native-gesture-handler/). Props are almost entirely inter-compatible with [`react-native-tab-view`](https://github.com/satya164/react-native-tab-view)
 
-- The [example/](https://github.com/adithyavis/reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
+- The [example/](https://github.com/mstfmedeni/reanimated-tab-view/tree/main/example) folder contains reference code to use the library.
+
+## Fork Features
+
+This fork adds the following features on top of the original package:
+
+- **renderTabBarItem**: Full control over individual tab item rendering with `TabBarItem` component
+- **contentContainerStyle**: Style the inner TabBar container for both scrollable and non-scrollable modes
+- **Backward compatible renderTabBar**: Support renderTabBar at root level in TabView
+- **Auto-scroll improvements**: Fixed negative scroll offset issues on initial render
+- **Enhanced TabBar customization**: Add badges, custom styles, and layouts to tabs
+
+For the original package, see [adithyavis/reanimated-tab-view](https://github.com/adithyavis/reanimated-tab-view).
 
 ## Demo
 
@@ -71,15 +85,19 @@ reanimated-tab-view depends purely on react-native-reanimated, and as such, the 
 
 ## Installation
 
-Install react-native-reanimated (>=2.x) and react-native-gesture-handler (>=2.x).
+Install react-native-reanimated (>=3.x) and react-native-gesture-handler (>=2.x).
 
-- https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/installation
+- https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started
 - https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation
 
 Open a Terminal in the project root and run:
 
 ```sh
-yarn add reanimated-tab-view
+# Using yarn
+yarn add @mstfmedeni/reanimated-tab-view
+
+# Using npm
+npm install @mstfmedeni/reanimated-tab-view
 ```
 
 ## Quick Start
@@ -89,7 +107,7 @@ yarn add reanimated-tab-view
 ```js
 import * as React from 'react';
 import { View, useWindowDimensions } from 'react-native';
-import { TabView } from 'reanimated-tab-view';
+import { TabView } from '@mstfmedeni/reanimated-tab-view';
 
 const FirstRoute = () => (
   <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
@@ -135,7 +153,7 @@ export default function TabViewExample() {
 ```js
 import * as React from 'react';
 import { View } from 'react-native';
-import { TabView, TabBar, TabBarItem } from 'reanimated-tab-view';
+import { TabView, TabBar, TabBarItem } from '@mstfmedeni/reanimated-tab-view';
 
 const renderCustomTabBar = (props) => (
   <TabBar

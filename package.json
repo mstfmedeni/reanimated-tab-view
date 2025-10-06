@@ -1,7 +1,7 @@
 {
-  "name": "reanimated-tab-view",
-  "version": "0.3.0",
-  "description": "Tab view component implemented using Reanimated 3",
+  "name": "@mstfmedeni/reanimated-tab-view",
+  "version": "0.5.0",
+  "description": "Tab view component implemented using Reanimated 3 - Fork with custom TabBar features",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -42,14 +42,17 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adithyavis/reanimated-tab-view.git"
+    "url": "git+https://github.com/mstfmedeni/reanimated-tab-view.git"
   },
-  "author": "Adithya Viswa <adithyaviswam@gmail.com> (https://github.com/adithyavis)",
+  "author": "Mustafa Medeni <mustafa.medeni@hotmail.com> (https://github.com/mstfmedeni)",
+  "contributors": [
+    "Adithya Viswa <adithyaviswam@gmail.com> (https://github.com/adithyavis)"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/adithyavis/reanimated-tab-view/issues"
+    "url": "https://github.com/mstfmedeni/reanimated-tab-view/issues"
   },
-  "homepage": "https://github.com/adithyavis/reanimated-tab-view#readme",
+  "homepage": "https://github.com/mstfmedeni/reanimated-tab-view#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
