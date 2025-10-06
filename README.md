@@ -84,6 +84,8 @@ yarn add reanimated-tab-view
 
 ## Quick Start
 
+### Basic Usage
+
 ```js
 import * as React from 'react';
 import { View, useWindowDimensions } from 'react-native';
@@ -128,45 +130,205 @@ export default function TabViewExample() {
 }
 ```
 
+### Custom Tab Bar with renderTabBarItem
+
+```js
+import * as React from 'react';
+import { View } from 'react-native';
+import { TabView, TabBar, TabBarItem } from 'reanimated-tab-view';
+
+const renderCustomTabBar = (props) => (
+  <TabBar
+    {...props}
+    contentContainerStyle={{ justifyContent: 'flex-start', gap: 8 }}
+    renderTabBarItem={(tabProps) => (
+      <View>
+        <TabBarItem
+          {...tabProps}
+          activeColor="#007AFF"
+          inactiveColor="#8E8E93"
+          labelStyle={{
+            fontSize: 14,
+            fontWeight: tabProps.focused ? '600' : '400',
+          }}
+          style={{
+            borderRadius: 8,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            backgroundColor: tabProps.focused ? '#E5F1FF' : 'transparent',
+          }}
+        />
+        {/* Add badge */}
+        {tabProps.index === 0 && (
+          <View
+            style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: '#FF3B30',
+            }}
+          />
+        )}
+      </View>
+    )}
+    style={{ backgroundColor: '#F2F2F7' }}
+    indicatorStyle={{ height: 0 }}
+  />
+);
+
+export default function CustomTabBarExample() {
+  // ... same as basic example
+  return (
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      renderTabBar={renderCustomTabBar}
+      tabBarConfig={{
+        tabBarDynamicWidthEnabled: true,
+      }}
+    />
+  );
+}
+```
+
 ## Props
 
 | Name                   | Description                                                                                                                                                       | Required | Type                                                     | Default   |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------- | --------- |
 | navigationState        | The state of the navigation including the index and routes.                                                                                                       | Yes      | `{index: number; routes: Route;}`                        |           |
+| renderScene            | A function that renders the scene for a given route. Use `RTVScrollView` or `RTVFlatList` in order to render collapsible headers through the `renderHeader` prop. | Yes      | `(props: SceneRendererProps) => React.ReactNode`        |           |
+| onIndexChange          | A function that is called when the index changes.                                                                                                                 | Yes      | `(index:number) => void`                                 |           |
+| renderTabBar           | Custom function to render the tab bar. Can be provided at root level or in `tabBarConfig`.                                                                        | No       | `(props: TabBarProps) => React.ReactNode`                | undefined |
 | initialLayout          | The initial layout of the tab view.                                                                                                                               | No       | `Partial<{width: number; height: number;}>`              | undefined |
 | sceneContainerStyle    | The style for the scene container.                                                                                                                                | No       | `StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>` | undefined |
 | sceneContainerGap      | The gap between each scene.                                                                                                                                       | No       | Number                                                   | 0         |
 | keyboardDismissMode    | Specifies how to dismiss the keyboard.                                                                                                                            | No       | `'auto'\|'on-drag'\|'none'`                              | 'auto'    |
 | animatedRouteIndex     | A callback equivalent. Pass a shared value and its value gets updated when tab view is swipeds                                                                    | No       | `SharedValue<number>`                                    | undefined |
 | swipeEnabled           | Enables or disables swipe gestures.                                                                                                                               | No       | Boolean                                                  | true      |
-| sceneContainerGap      | The gap between each scene.                                                                                                                                       | No       | Number                                                   | 0         |
 | renderMode             | Specifies the layout mode of the tab view.                                                                                                                        | No       | `'windowed'\|'lazy'\|'all'`                              | "all"     |
 | jumpMode               | Specifies the jump mode of the tab view.                                                                                                                          | No       | `'smooth'\|'scrolling'\|'no-animation'`                  | "smooth"  |
 | tabBarConfig           | Configuration for the tab bar.                                                                                                                                    | No       | `TabBarConfig`- For details, see below.                  | undefined |
-| TabViewHeaderComponent | A component to render as the tab view header.                                                                                                                     | No       | `React.ReactNode`                                        | undefined |
-| renderScene            | A function that renders the scene for a given route. Use `RTVScrollView` or `RTVFlatList` in order to render collapsible headers through the `renderHeader` prop. | No       | `(props: HeaderRendererProps) => React.ReactNode`        |           |
-| renderHeader           | A function that renders the header for the tab view.                                                                                                              | No       | `(props: SceneRendererProps) => React.ReactNode`         | undefined |
-| onIndexChange          | A function that is called when the index changes.                                                                                                                 | Yes      | `(index:number) => void`                                 |           |
+| renderHeader           | A function that renders the header for the tab view.                                                                                                              | No       | `(props: HeaderRendererProps) => React.ReactNode`         | undefined |
 | onSwipeEnd             | Callback function for when a swipe gesture ends.                                                                                                                  | No       | Function                                                 | undefined |
 | onSwipeStart           | Callback function for when a swipe gesture starts.                                                                                                                | No       | Function                                                 | undefined |
 
-tabBarConfig properties are as follows:
+### TabBarConfig Properties
 
 | Name                      | Description                                                                | Required | Type                                                     | Default                                               |
 | ------------------------- | -------------------------------------------------------------------------- | -------- | -------------------------------------------------------- | ----------------------------------------------------- |
 | tabBarPosition            | Specifies the position of the tab bar.                                     | No       | `'top'\|'bottom'`                                        | 'top'                                                 |
 | tabBarType                | Specifies the type of the tab bar, according to the Material Design spec.  | No       | `'primary'\|'secondary'`                                 | 'secondary'                                           |
-| tabBarScrollEnabled       | Enables or disables scrollable tab bar.                                    | No       | Boolean                                                  | true                                                  |
+| tabBarScrollEnabled       | Enables or disables scrollable tab bar.                                    | No       | Boolean                                                  | false                                                 |
 | tabBarDynamicWidthEnabled | Enables dynamic width for tabs.                                            | No       | Boolean                                                  | true for primary tab bar, false for secondary tab bar |
 | scrollableTabWidth        | The width of each tab. Applicable ONLY when `tabBarScrollEnabled` is true. | No       | Number                                                   | 100                                                   |
-| tabBarStyle               | Used to modify the style for the tab bar.                                  | No       | `StyleProp<ViewStyle>`                                   | undefined                                             |
-| tabStyle                  | Used to modify the style for each style.                                   | No       | `StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>` | undefined                                             |
-| tabBarIndicatorStyle      | Used to modify the style for the tab bar indicator.                        | No       | `StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>>` | undefined                                             |
-| renderTabBar              | Custom method to render the tab bar.                                       | No       | Function                                                 | undefined                                             |
+| tabBarStyle               | Used to modify the style for the tab bar container.                        | No       | `StyleProp<ViewStyle>`                                   | undefined                                             |
+| tabStyle                  | Used to modify the style for each tab.                                     | No       | `StyleProp<ViewStyle>`                                   | undefined                                             |
+| tabLabelStyle             | Used to modify the style for tab labels.                                   | No       | `StyleProp<TextStyle>`                                   | undefined                                             |
+| tabBarIndicatorStyle      | Used to modify the style for the tab bar indicator.                        | No       | `StyleProp<ViewStyle>`                                   | undefined                                             |
+| renderTabBar              | Custom method to render the tab bar.                                       | No       | `(props: TabBarProps) => React.ReactNode`                | undefined                                             |
 
-ref methods
+### TabBar Component Props
+
+When using the `TabBar` component directly (via `renderTabBar`), you have access to these additional props:
+
+| Name                   | Description                                                                                   | Type                                              | Default   |
+| ---------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------- | --------- |
+| renderTabBarItem       | Custom function to render each tab item. Provides full control over tab appearance.           | `(props: TabBarItemProps) => React.ReactNode`     | undefined |
+| contentContainerStyle  | Style for the inner container (FlatList contentContainerStyle or View style).                 | `StyleProp<ViewStyle>`                            | undefined |
+| activeColor            | Color for active tab labels.                                                                  | String                                            | undefined |
+| inactiveColor          | Color for inactive tab labels.                                                                | String                                            | undefined |
+| getLabelText           | Function to get label text from route.                                                        | `(scene: Scene) => string \| undefined`           | undefined |
+| tabContentStyle        | Style for tab content container.                                                              | `StyleProp<ViewStyle>`                            | undefined |
+| onTabPress             | Callback when a tab is pressed.                                                               | `(scene: Scene) => void`                          | undefined |
+| onTabLongPress         | Callback when a tab is long pressed.                                                          | `(scene: Scene) => void`                          | undefined |
+
+### TabBarItem Component Props
+
+The `TabBarItem` component can be used with `renderTabBarItem`:
+
+| Name           | Description                          | Type                       | Default   |
+| -------------- | ------------------------------------ | -------------------------- | --------- |
+| route          | The route object (provided by hook). | Route                      | -         |
+| focused        | Whether the tab is focused.          | Boolean                    | -         |
+| index          | The tab index.                       | Number                     | -         |
+| activePercentage | Animation value for transitions.   | `SharedValue<number>`      | -         |
+| activeColor    | Color for active state.              | String                     | undefined |
+| inactiveColor  | Color for inactive state.            | String                     | undefined |
+| labelStyle     | Style for the label text.            | `StyleProp<TextStyle>`     | undefined |
+| style          | Style for the container.             | `StyleProp<ViewStyle>`     | undefined |
+| label          | Custom label text.                   | String                     | undefined |
+
+### Ref Methods
 
 - `jumpTo(routeKey: string)`: Jump to a specific route.
+
+## API Examples
+
+### Using contentContainerStyle
+
+Control the layout and spacing of tabs:
+
+```js
+<TabBar
+  {...props}
+  contentContainerStyle={{
+    justifyContent: 'flex-start',  // Align tabs to start
+    gap: 12,                        // Add spacing between tabs
+    paddingHorizontal: 16,          // Add horizontal padding
+  }}
+  tabBarConfig={{
+    tabBarDynamicWidthEnabled: true, // Let tabs size to content
+  }}
+/>
+```
+
+### Custom Tab Items with Badges
+
+```js
+renderTabBarItem={(tabProps) => (
+  <View>
+    <TabBarItem
+      {...tabProps}
+      style={{
+        borderRadius: 20,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        backgroundColor: tabProps.focused ? '#007AFF' : '#F0F0F0',
+      }}
+    />
+    {/* Notification badge */}
+    {tabProps.route.badge && (
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>{tabProps.route.badge}</Text>
+      </View>
+    )}
+  </View>
+)}
+```
+
+### Backward Compatibility
+
+Both ways of providing `renderTabBar` are supported:
+
+```js
+// Option 1: Root level (new, recommended)
+<TabView
+  renderTabBar={renderCustomTabBar}
+  {...otherProps}
+/>
+
+// Option 2: In tabBarConfig (legacy, still supported)
+<TabView
+  tabBarConfig={{
+    renderTabBar: renderCustomTabBar,
+  }}
+  {...otherProps}
+/>
+```
 
 ## Author
 

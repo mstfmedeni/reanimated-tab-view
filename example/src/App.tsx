@@ -11,6 +11,8 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   TabView as ReanimatedTabView,
+  TabBar,
+  TabBarItem,
   type NavigationState,
   type TabViewMethods,
 } from 'reanimated-tab-view';
@@ -69,6 +71,50 @@ export default function App() {
     []
   );
 
+  const renderCustomTabBar = React.useCallback(
+    (props: any) => (
+      <TabBar
+        {...props}
+        contentContainerStyle={{ justifyContent: 'flex-start', gap: 8 }}
+        renderTabBarItem={(tabProps) => (
+          <View>
+            <TabBarItem
+              {...tabProps}
+              activeColor="#007AFF"
+              inactiveColor="#8E8E93"
+              labelStyle={{
+                fontSize: 14,
+                fontWeight: tabProps.focused ? '600' : '400',
+              }}
+              style={{
+                borderRadius: 8,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                backgroundColor: tabProps.focused ? '#E5F1FF' : 'transparent',
+              }}
+            />
+            {tabProps.index === 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: '#FF3B30',
+                }}
+              />
+            )}
+          </View>
+        )}
+        style={{ backgroundColor: '#F2F2F7' }}
+        indicatorStyle={{ height: 0 }}
+      />
+    ),
+    []
+  );
+
   const [navigationState, setNavigationState] = React.useState<NavigationState>(
     {
       index: initialTabIndex,
@@ -115,7 +161,11 @@ export default function App() {
             onIndexChange={handleIndexChange}
             navigationState={navigationState}
             renderScene={renderScene}
+            renderTabBar={renderCustomTabBar}
             initialLayout={initialLayout}
+            tabBarConfig={{
+              tabBarDynamicWidthEnabled: true,
+            }}
           />
         ) : (
           <TabView
