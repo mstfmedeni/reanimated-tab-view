@@ -27,6 +27,7 @@ export const TabContent = React.memo<TabContentProps>((props) => {
     return (
       <Animated.Text
         numberOfLines={1}
+        ellipsizeMode="tail"
         style={[
           styles.activeLabel,
           animatedActiveLabelStyle,
@@ -43,6 +44,7 @@ export const TabContent = React.memo<TabContentProps>((props) => {
     return (
       <Animated.Text
         numberOfLines={1}
+        ellipsizeMode="tail"
         style={[
           styles.inactiveLabel,
           animatedInactiveLabelStyle,
@@ -66,17 +68,16 @@ export const TabContent = React.memo<TabContentProps>((props) => {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    flexDirection: 'row',
+    alignSelf: 'stretch',
   },
   activeLabel: {
     color: DEFAULT_ACTIVE_COLOR,
-    flexWrap: 'nowrap',
+    textAlign: 'center',
   },
   inactiveLabel: {
     position: 'absolute',
     color: DEFAULT_INACTIVE_COLOR,
-    left: 0,
-    right: 0,
-    flexWrap: 'nowrap',
+    width: '100%',
+    textAlign: 'center',
   },
 });

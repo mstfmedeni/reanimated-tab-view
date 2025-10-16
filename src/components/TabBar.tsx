@@ -236,6 +236,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
-    minWidth: 80,
   },
 });
