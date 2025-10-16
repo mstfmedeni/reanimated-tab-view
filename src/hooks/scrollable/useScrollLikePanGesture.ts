@@ -10,18 +10,27 @@ import {
   GestureSource,
 } from '../../constants/scrollable';
 import { useScrollableContext } from '../../providers/Scrollable';
+import { usePropsContext } from '../../providers/Props';
 
 const ACTIVE_OFFSET_Y: [number, number] = [-10, 10];
+const FAIL_OFFSET_X: [number, number] = [-10, 10];
 
 export const useScrollLikePanGesture = () => {
   const { animatedTranslateYSV, gestureSourceSV, translateYBounds } =
     useScrollableContext();
+  const { renderHeader } = usePropsContext();
 
   const initialTranslateYSV = useSharedValue(0);
 
   const scrollLikePanGesture = useMemo(() => {
+    // If there's no header, disable the gesture entirely
+    if (!renderHeader || translateYBounds.upper === 0) {
+      return Gesture.Pan().enabled(false);
+    }
+
     const gesture = Gesture.Pan()
       .activeOffsetY(ACTIVE_OFFSET_Y)
+      .failOffsetX(FAIL_OFFSET_X)
       .onTouchesDown(() => {
         cancelAnimation(animatedTranslateYSV);
       })
@@ -48,6 +57,7 @@ export const useScrollLikePanGesture = () => {
 
     return gesture;
   }, [
+    renderHeader,
     animatedTranslateYSV,
     gestureSourceSV,
     initialTranslateYSV,

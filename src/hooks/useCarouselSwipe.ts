@@ -51,6 +51,7 @@ export const useCarouselSwipePanGesture = (
       Gesture.Pan()
         .enabled(gestureEnabled)
         .activeOffsetX(ACTIVE_OFFSET_X)
+        .failOffsetY([-10, 10])
         .onStart(() => {
           preSwipeStartswipeTranslationXSV.value = swipeTranslationXSV.value;
           runOnJS(handleSwipeStart)();

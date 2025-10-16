@@ -26,6 +26,7 @@ export const TabContent = React.memo<TabContentProps>((props) => {
     const activeColorStyle = activeColor ? { color: activeColor } : {};
     return (
       <Animated.Text
+        numberOfLines={1}
         style={[
           styles.activeLabel,
           animatedActiveLabelStyle,
@@ -41,6 +42,7 @@ export const TabContent = React.memo<TabContentProps>((props) => {
     const inactiveColorStyle = inactiveColor ? { color: inactiveColor } : {};
     return (
       <Animated.Text
+        numberOfLines={1}
         style={[
           styles.inactiveLabel,
           animatedInactiveLabelStyle,

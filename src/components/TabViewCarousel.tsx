@@ -114,42 +114,47 @@ const TabViewCarouselWithoutProviders = React.memo(
 
     //#region render
     return (
-      <GestureDetector gesture={swipePanGesture}>
-        <View style={[styles.container]} onLayout={onTabViewCarouselLayout}>
-          {navigationState.routes.map((route, index) => {
-            const shouldRender = computeShouldRenderRoute(index);
-            const renderOffset = index * translationPerSceneContainer;
-            return (
-              <Animated.View
-                key={route.key}
-                style={[
-                  styles.sceneContainer,
-                  {
-                    left: renderOffset,
-                  },
-                  sceneContainerStyle,
-                  swipeTranslationAnimatedStyle,
-                ]}
-              >
-                <SceneWrapper routeIndex={index}>
-                  {shouldRender && (
-                    <LazyLoader
-                      shouldLazyLoad={
-                        index !== initialRouteIndex && isLazyLoadingEnabled
-                      }
-                      onMount={() => handleSceneMount(index)}
-                    >
-                      <SceneRendererContextProvider route={route} index={index}>
-                        <Scene renderScene={renderScene} route={route} />
-                      </SceneRendererContextProvider>
-                    </LazyLoader>
-                  )}
-                </SceneWrapper>
-              </Animated.View>
-            );
-          })}
-        </View>
-      </GestureDetector>
+      <View style={[styles.container]} onLayout={onTabViewCarouselLayout}>
+        <GestureDetector gesture={swipePanGesture}>
+          <Animated.View style={[styles.gestureContainer]}>
+            {navigationState.routes.map((route, index) => {
+              const shouldRender = computeShouldRenderRoute(index);
+              const renderOffset = index * translationPerSceneContainer;
+              return (
+                <Animated.View
+                  key={route.key}
+                  style={[
+                    styles.sceneContainer,
+                    {
+                      left: renderOffset,
+                    },
+                    sceneContainerStyle,
+                    swipeTranslationAnimatedStyle,
+                  ]}
+                >
+                  <SceneWrapper routeIndex={index}>
+                    {shouldRender && (
+                      <LazyLoader
+                        shouldLazyLoad={
+                          index !== initialRouteIndex && isLazyLoadingEnabled
+                        }
+                        onMount={() => handleSceneMount(index)}
+                      >
+                        <SceneRendererContextProvider
+                          route={route}
+                          index={index}
+                        >
+                          <Scene renderScene={renderScene} route={route} />
+                        </SceneRendererContextProvider>
+                      </LazyLoader>
+                    )}
+                  </SceneWrapper>
+                </Animated.View>
+              );
+            })}
+          </Animated.View>
+        </GestureDetector>
+      </View>
     );
   })
   //#endregion
@@ -174,6 +179,10 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     overflow: 'hidden',
+  },
+  gestureContainer: {
+    width: '100%',
+    flex: 1,
   },
   sceneContainer: {
     position: 'absolute',

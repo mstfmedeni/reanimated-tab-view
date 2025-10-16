@@ -1,6 +1,6 @@
 {
   "name": "@mstfmedeni/reanimated-tab-view",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Tab view component implemented using Reanimated 3 - Fork with custom TabBar features",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
