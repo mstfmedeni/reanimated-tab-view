@@ -56,19 +56,27 @@ export const TabContent = React.memo<TabContentProps>((props) => {
   }, [inactiveColor, animatedInactiveLabelStyle, label, labelStyle]);
 
   return (
-    <>
+    <Animated.View style={styles.container}>
       {activeLabel}
       {inactiveLabel}
-    </>
+    </Animated.View>
   );
 });
 
 const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    flexDirection: 'row',
+  },
   activeLabel: {
     color: DEFAULT_ACTIVE_COLOR,
+    flexWrap: 'nowrap',
   },
   inactiveLabel: {
     position: 'absolute',
     color: DEFAULT_INACTIVE_COLOR,
+    left: 0,
+    right: 0,
+    flexWrap: 'nowrap',
   },
 });

@@ -235,6 +235,7 @@ const styles = StyleSheet.create({
   tab: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
+    minWidth: 80,
   },
 });
