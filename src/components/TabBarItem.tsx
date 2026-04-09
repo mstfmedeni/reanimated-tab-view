@@ -8,6 +8,8 @@ type TabBarItemComponentProps = TabBarItemProps & {
   activeColor?: string;
   inactiveColor?: string;
   labelStyle?: StyleProp<TextStyle>;
+  numberOfLines?: number;
+  ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
   style?: StyleProp<ViewStyle>;
   label?: string;
 };
@@ -19,6 +21,8 @@ export const TabBarItem = React.memo((props: TabBarItemComponentProps) => {
     activeColor,
     inactiveColor,
     labelStyle,
+    numberOfLines,
+    ellipsizeMode,
     style,
     label,
   } = props;
@@ -31,6 +35,8 @@ export const TabBarItem = React.memo((props: TabBarItemComponentProps) => {
         inactiveColor={inactiveColor}
         label={label ?? route.title ?? route.key}
         labelStyle={labelStyle}
+        numberOfLines={numberOfLines}
+        ellipsizeMode={ellipsizeMode}
       />
     </View>
   );

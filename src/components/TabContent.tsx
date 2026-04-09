@@ -7,8 +7,15 @@ const DEFAULT_ACTIVE_COLOR = 'rgba(255, 255, 255, 1)';
 const DEFAULT_INACTIVE_COLOR = 'rgba(255, 255, 255, 0.7)';
 
 export const TabContent = React.memo<TabContentProps>((props) => {
-  const { activePercentage, activeColor, inactiveColor, label, labelStyle } =
-    props;
+  const {
+    activePercentage,
+    activeColor,
+    inactiveColor,
+    label,
+    labelStyle,
+    numberOfLines = 1,
+    ellipsizeMode = 'tail',
+  } = props;
 
   const animatedActiveLabelStyle = useAnimatedStyle(() => {
     return {
@@ -26,8 +33,9 @@ export const TabContent = React.memo<TabContentProps>((props) => {
     const activeColorStyle = activeColor ? { color: activeColor } : {};
     return (
       <Animated.Text
-        numberOfLines={1}
-        ellipsizeMode="tail"
+        numberOfLines={numberOfLines}
+        ellipsizeMode={ellipsizeMode}
+        allowFontScaling={false}
         style={[
           styles.activeLabel,
           animatedActiveLabelStyle,
@@ -38,13 +46,14 @@ export const TabContent = React.memo<TabContentProps>((props) => {
         {label}
       </Animated.Text>
     );
-  }, [activeColor, animatedActiveLabelStyle, label, labelStyle]);
+  }, [activeColor, animatedActiveLabelStyle, label, labelStyle, numberOfLines, ellipsizeMode]);
   const inactiveLabel = useMemo(() => {
     const inactiveColorStyle = inactiveColor ? { color: inactiveColor } : {};
     return (
       <Animated.Text
-        numberOfLines={1}
-        ellipsizeMode="tail"
+        numberOfLines={numberOfLines}
+        ellipsizeMode={ellipsizeMode}
+        allowFontScaling={false}
         style={[
           styles.inactiveLabel,
           animatedInactiveLabelStyle,
@@ -55,7 +64,7 @@ export const TabContent = React.memo<TabContentProps>((props) => {
         {label}
       </Animated.Text>
     );
-  }, [inactiveColor, animatedInactiveLabelStyle, label, labelStyle]);
+  }, [inactiveColor, animatedInactiveLabelStyle, label, labelStyle, numberOfLines, ellipsizeMode]);
 
   return (
     <Animated.View style={styles.container}>

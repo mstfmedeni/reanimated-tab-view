@@ -9,4 +9,6 @@ export type TabContentProps = Omit<ViewProps, 'children'> & {
   activeColor?: string;
   inactiveColor?: string;
   labelStyle?: StyleProp<TextStyle>;
+  numberOfLines?: number;
+  ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
 };

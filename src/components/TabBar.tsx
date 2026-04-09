@@ -23,6 +23,8 @@ export const TabBar = React.memo((props: TabBarProps) => {
     tabContentStyle: tabContentContainerStyle,
     tabStyle,
     labelStyle,
+    numberOfLines,
+    ellipsizeMode,
     indicatorStyle,
     style: tabBarContainerStyle,
     contentContainerStyle,
@@ -147,6 +149,8 @@ export const TabBar = React.memo((props: TabBarProps) => {
                   label={getLabelText?.({ route })}
                   style={tabContentContainerStyle}
                   labelStyle={labelStyle}
+                  numberOfLines={numberOfLines}
+                  ellipsizeMode={ellipsizeMode}
                 />
               )
             }
@@ -171,6 +175,8 @@ export const TabBar = React.memo((props: TabBarProps) => {
       inactiveColor,
       getLabelText,
       labelStyle,
+      numberOfLines,
+      ellipsizeMode,
       tabStyle,
       renderTabBarItem,
       currentRouteIndex,
